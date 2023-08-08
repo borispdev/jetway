@@ -1,0 +1,55 @@
+version: "3.8"
+
+services:
+  db:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: dbrootpass
+      MYSQL_DATABASE: jetwaydb
+      MYSQL_USER: dbuser
+      MYSQL_PASSWORD: dbpass
+    ports:
+      - '3306:3306'
+    volumes:
+      - /root/jetwaydb/jetway_empty_db.sql:/docker-entrypoint-initdb.d/jetway_empty_db.sql
+      - /root/appdata:/var/lib/mysql
+  
+  jetway-api:
+    image: borispdev/jetway-api
+    depends_on:
+      - db
+    container_name: jetway-api
+    command: "uvicorn main:app --reload --port=8000 --host=0.0.0.0"
+    environment:
+      MYSQL_SERVER: db
+      MYSQL_PORT: 3306
+      DB_NAME: jetwaydb
+      DB_USER: dbuser
+      DB_PASSWORD: dbpass
+    ports:
+      - 8000:8000
+  
+  jetway-ui:
+    image: borispdev/jetway-ui
+    container_name: jetway-ui
+    environment:
+     API_URL: http://81.28.7.121:8000
+    ports:
+      - 80:80
+      - 443:443
+    restart: always
+    volumes:
+      - /nginx/conf/:/etc/nginx/conf.d
+      - /certbot/www:/var/www/certbot
+      - /certbot/conf/:/etc/nginx/ssl
+  
+  certbot:
+    image: certbot/certbot:latest
+    command: certonly --webroot --webroot-path=/var/www/certbot --email borisftz@gmail.com --agree-tos --no-eff-email -d jet-way.duckdns.org
+    depends_on:
+      - jetway-ui
+    volumes:
+      - /certbot/www/:/var/www/certbot
+      - /certbot/conf/:/etc/letsencrypt

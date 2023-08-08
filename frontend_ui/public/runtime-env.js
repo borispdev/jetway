@@ -1,0 +1,1 @@
+window.__RUNTIME_CONFIG__ = {"NODE_ENV":"development","API_URL":"http://81.28.7.121:8000"};
