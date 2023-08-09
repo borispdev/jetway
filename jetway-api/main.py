@@ -1,12 +1,19 @@
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from routers import basic, airline, customer, admin
 from routers import authentication
 
 # models.Base.metadata.create_all(bind=engine) -- not used: migrations managed by Alembic
 
-app = FastAPI()
+app = FastAPI(
+    title='JetWay API',
+    description='JetWay flights app api',
+    version='1.0b',
+    docs_url='/docs',
+    redoc_url='/redoc',
+    openapi_url='/openapi.json'
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -18,8 +25,8 @@ app.add_middleware(
 
 
 @app.get('/')
-async def root():
-    return {'message': "Don't panic."}
+async def root(request: Request):
+    return {'message': "Don't panic.", "root_path": request.scope.get("root_path")}
 
 app.include_router(basic.router)
 app.include_router(airline.router)
