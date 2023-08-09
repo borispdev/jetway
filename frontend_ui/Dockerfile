@@ -28,8 +28,6 @@ RUN npm i -g runtime-env-cra
 
 WORKDIR /usr/share/nginx/html/
 
-EXPOSE 80
-
-EXPOSE 443
+EXPOSE 3000
 
 CMD [ "/bin/sh", "-c", "runtime-env-cra --config-name=./runtime-env.js --env-file=./.env && nginx -g \"daemon off;\""]

@@ -21,35 +21,31 @@ services:
     depends_on:
       - db
     container_name: jetway-api
-    command: "uvicorn main:app --reload --port=8000 --host=0.0.0.0"
+    command: "python main.py"
     environment:
       MYSQL_SERVER: db
       MYSQL_PORT: 3306
       DB_NAME: jetwaydb
       DB_USER: dbuser
       DB_PASSWORD: dbpass
-    ports:
-      - 8000:8000
+    expose:
+      - 8000
   
   jetway-ui:
     image: borispdev/jetway-ui
     container_name: jetway-ui
     environment:
-     API_URL: http://81.28.7.121:8000
-    ports:
-      - 80:80
-      - 443:443
+     API_URL: https://api.jet-way.cc
     restart: always
-    volumes:
-      - /nginx/conf/:/etc/nginx/conf.d
-      - /certbot/www:/var/www/certbot
-      - /certbot/conf/:/etc/nginx/ssl
+    expose:
+      - 3000
   
-  certbot:
-    image: certbot/certbot:latest
-    command: certonly --webroot --webroot-path=/var/www/certbot --email borisftz@gmail.com --agree-tos --no-eff-email -d jet-way.duckdns.org
-    depends_on:
-      - jetway-ui
+  jetway-proxy:
+    image: borispdev/jetway-proxy
+    container_name: jetway-proxy
+    restart: always
+    ports:
+      - '80:80'
+      - '443:443'
     volumes:
-      - /certbot/www/:/var/www/certbot
-      - /certbot/conf/:/etc/letsencrypt
+      - /proxy/ssl:/etc/nginx/ssl
