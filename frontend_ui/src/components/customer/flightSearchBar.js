@@ -9,28 +9,30 @@ const FlightSearchBar = ({handleSearch}) => {
     const [minDate, setMinDate] = useState(null);
     const [searchParams, setSearchParams] = useState({origin: '', destination: '', departure: ''})
 
+    const getCountries = async () => {
+        response = await api.get('/countries/')
+        return response.data;
+    };
+    
     useEffect(()=> {
-        api.get('/countries/')
-            .then((response) => {
-                setCountries(response.data);
-            });
-            limitDate();
-        },[]);
+        setCountries(getCountries());
+        limitDate();
+    },[]);
 
-    function limitDate() {
+    const limitDate = () => {
         let date = new Date().toJSON().slice(0,10);
         setMinDate(date);
     };
 
-    function handleSelect(e) {
+    const handleSelect = (e) => {
         const value = e.target.value;
         setSearchParams({...searchParams, [e.target.name]: value});
     };
 
-    function handleSubmit(e) {
+    const handleSubmit = (e) => {
         e.preventDefault();
         handleSearch(searchParams);
-    }
+    };
 
     return ( 
         <form className="row align-items-center" onSubmit={(e)=>handleSubmit(e)}>

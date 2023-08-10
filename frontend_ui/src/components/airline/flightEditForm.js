@@ -43,27 +43,27 @@ const FlightEditForm = ({title, isEdit}) => {
     setMinDate(date);
   }
   
-  const handleAdd = (data) => {
+  const handleAdd = async (data) => {
   
     if (isEdit === false) {
-      api.post('/flights/', data)
-      .then(response => {
-        toast.success('New flight added.');
-      })
-      .catch(error => {
-        toast.error(error.message);
-      });
+      await api.post('/flights/', data)
+        .then(response => {
+          toast.success('New flight added.');
+        })
+        .catch(error => {
+          toast.error(error.message);
+        });
     } else {
       delete data.origin;
       delete data.destination;
       const updatedFlight = {id: flightData.id, ...data};
-      api.put('/flights/', updatedFlight)
-      .then(response => {
-        toast.success('Flight updated.');
-      })
-      .catch(error => {
-        toast.error(error.message);
-      });
+      await api.put('/flights/', updatedFlight)
+        .then(response => {
+          toast.success('Flight updated.');
+        })
+        .catch(error => {
+          toast.error(error.message);
+        });
     }
     navigate(-1);
   }

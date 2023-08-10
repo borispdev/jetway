@@ -15,14 +15,18 @@ class Tickets extends Component {
         sortColumn: {path: 'departure', order: 'asc'}
     };
     
+    getTickets = async () => {
+        await api.get('/tickets/')
+            .then(response => {
+                this.formatDates(response.data);
+            })
+            .catch(error => {
+                toast.error(error.message);
+            });
+    };
+    
     componentDidMount() {
-        api.get('/tickets/')
-        .then(response => {
-            this.formatDates(response.data);
-        })
-        .catch(error => {
-            toast.error(error.message);
-        });
+        this.getTickets();
     }
     
     getProcessedData = () => {
@@ -39,16 +43,16 @@ class Tickets extends Component {
         this.setState({tickets: items});
     }
     
-    handleDelete = id => {
-        api.delete(`/tickets/${id}`)
-        .then(response => {
-            let ticketsTemp = this.state.tickets.filter(ticket => ticket.id !== id);
-            this.setState({tickets: ticketsTemp});
-            toast.success(`Ticket deleted.`);
-        })
-        .catch(error => {
-            toast.error(error);
-        });
+    handleDelete = async id => {
+        await api.delete(`/tickets/${id}`)
+            .then(response => {
+                let ticketsTemp = this.state.tickets.filter(ticket => ticket.id !== id);
+                this.setState({tickets: ticketsTemp});
+                toast.success(`Ticket deleted.`);
+            })
+            .catch(error => {
+                toast.error(error);
+            });
     }
 
 

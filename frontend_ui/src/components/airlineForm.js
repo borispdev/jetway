@@ -17,16 +17,16 @@ const AirlineForm = () => {
     const {register, handleSubmit, formState } = useForm({resolver: yupResolver(airlineSchema)});
     const {errors} = formState;
 
-    const handleAdd = (data) => {
+    const handleAdd = async (data) => {
             let tempData = ({...data, user_id: user.id});
-            api.post('/airlines/', tempData)
-            .then(response => {
-                toast.success('Airline created');
-                navigate(-1)
-            })
-            .catch(error => {
-                toast.error(error.message);
-            });
+            await api.post('/airlines/', tempData)
+                .then(response => {
+                    toast.success('Airline created');
+                    navigate(-1)
+                })
+                .catch(error => {
+                    toast.error(error.message);
+                });
         }
     
     return ( 

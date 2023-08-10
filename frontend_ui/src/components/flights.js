@@ -21,9 +21,8 @@ class Flights extends Component {
     };
   }
 
-  getData = (endpoint) => {
-    api
-      .get(endpoint)
+  getData = async (endpoint) => {
+    await api.get(endpoint)
       .then((response) => {
         this.formatDates(response.data);
       })
@@ -62,7 +61,7 @@ class Flights extends Component {
     this.setState({ flights: items });
   };
 
-  handleSearch = (searchParams) => {
+  handleSearch = async (searchParams) => {
     if (
       searchParams.origin === "" ||
       searchParams.destination === "" ||
@@ -71,10 +70,7 @@ class Flights extends Component {
       toast.error("Please fill in the serch parameters.");
     } else {
       searchParams.departure = moment(searchParams.departure).format('YYYY-MM-DD');
-      api
-        .get(
-          `/flights/?origin=${searchParams.origin}&destination=${searchParams.destination}&date=${searchParams.departure}`
-        )
+      await api.get(`/flights/?origin=${searchParams.origin}&destination=${searchParams.destination}&date=${searchParams.departure}`)
         .then((response) => {
           if (response.data.length === 0) {
             toast.warning("No flights found.");
@@ -87,11 +83,11 @@ class Flights extends Component {
     }
   };
 
-  handleDelete = (id) => {
+  handleDelete = async (id) => {
     let tempFlights = [...this.state.flights];
     tempFlights = tempFlights.filter(flight => flight.id !== id);
     this.setState({flights: tempFlights});
-    api.delete(`/flights/${id}`)
+    await api.delete(`/flights/${id}`)
         .then((response) => {
           toast.success(`Flight deleted.`);
         })
@@ -100,9 +96,8 @@ class Flights extends Component {
         });
   };
 
-  handleBooking = (id) => {
-    api
-      .post("/tickets/", { flight_id: id })
+  handleBooking = async (id) => {
+    await api.post("/tickets/", { flight_id: id })
       .then((response) => {
         toast.success("New ticket added.");
       })

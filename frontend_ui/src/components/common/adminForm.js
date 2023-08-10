@@ -14,16 +14,16 @@ const AdminForm = () => {
     const {register, handleSubmit, formState } = useForm({resolver: yupResolver(adminSchema)});
     const {errors} = formState;
 
-    const handleAdd = (data) => {
+    const handleAdd = async (data) => {
         const tempData = ({...data, user_id: user.id});
-        api.post('/admin/', tempData)
-            .then(response => {
-                toast.success('Admin created');
-                navigate(-1)
-            })
-            .catch(error => {
-                toast.error(error.message);
-            });
+            await api.post('/admin/', tempData)
+                .then(response => {
+                    toast.success('Admin created');
+                    navigate(-1)
+                })
+                .catch(error => {
+                    toast.error(error.message);
+                });
     }
     
     return ( 

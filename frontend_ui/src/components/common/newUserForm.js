@@ -12,16 +12,16 @@ const NewUserForm = () => {
     const {errors} = formState;
 
 
-    const handleAdd = (data) => {
+    const handleAdd = async (data) => {
         delete data.confirmPassword;
-        api.post('/users/', data)
-            .then((response) => {
-                navigate('/login');
-                toast.success('Registration successful, you can now login.');
-            })
-            .catch((error) => {
-               toast.error(error.message); 
-            });
+            await api.post('/users/', data)
+                .then((response) => {
+                    navigate('/login');
+                    toast.success('Registration successful, you can now login.');
+                })
+                .catch((error) => {
+                toast.error(error.message); 
+                });
     }
 
     return (

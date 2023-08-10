@@ -18,11 +18,10 @@ class DataAdmin extends Component {
       pageSize: 5,
       sortColumn: this.props.sortColumn,
     };
-  }
+  };
 
-  getData = (endpoint) => {
-    api
-      .get(endpoint)
+  getData = async (endpoint) => {
+    await api.get(endpoint)
       .then((response) => {
         this.setState({data: response.data});
       })
@@ -39,7 +38,7 @@ class DataAdmin extends Component {
     if (prevProps.dataSource !== this.props.dataSource) {
       this.getData(this.props.dataSource);
     }
-  }
+  };
 
   getProcessedData = () => {
     const {data: allData, sortColumn, currentPage, pageSize} = this.state;
@@ -48,17 +47,17 @@ class DataAdmin extends Component {
     return { totalCount: sorted.length, data: processedData };
   };
 
-  handleDelete = (id) => {
+  handleDelete = async (id) => {
     let tempData = [...this.state.data];
     tempData = tempData.filter(item => item.id !== id);
     this.setState({data: tempData});
-    api.delete(`${this.props.dataSource}${id}`)
-        .then((response) => {
-          toast.success(`${this.props.entity} deleted.`);
-        })
-        .catch((error) => {
-          toast.error(error.message);
-        });
+    await api.delete(`${this.props.dataSource}${id}`)
+      .then((response) => {
+        toast.success(`${this.props.entity} deleted.`);
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      });
   };
 
   handleSort = (sortColumn) => {
@@ -122,7 +121,7 @@ class DataAdmin extends Component {
         ) : null}
       </div>
     );
-  }
+  };
 }
 
 export default DataAdmin;

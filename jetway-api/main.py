@@ -1,8 +1,7 @@
 import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from routers import basic, airline, customer, admin
-from routers import authentication
+from routers import authentication, administrator, airlines, countries, customers, flights, tickets, users
 
 # models.Base.metadata.create_all(bind=engine) -- not used: migrations managed by Alembic
 
@@ -23,17 +22,18 @@ app.add_middleware(
     allow_headers=['*']
 )
 
+# @app.get('/')
+# async def root(request: Request):
+#     return {'message': "Don't panic."}
 
-@app.get('/')
-async def root(request: Request):
-    return {'message': "Don't panic.", "root_path": request.scope.get("root_path")}
-
-app.include_router(basic.router)
-app.include_router(airline.router)
-app.include_router(customer.router)
-app.include_router(admin.router)
 app.include_router(authentication.router)
-
+app.include_router(administrator.router)
+app.include_router(airlines.router)
+app.include_router(countries.router)
+app.include_router(customers.router)
+app.include_router(flights.router)
+app.include_router(tickets.router)
+app.include_router(users.router)
 
 if __name__ == '__main__':
     uvicorn.run(

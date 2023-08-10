@@ -21,7 +21,6 @@ import ProtectedRoute from './components/common/protectedRoute';
 export const CountriesContext = createContext('');
 export const ProfileContext = createContext('');
 
-
 function App() {
   const [countries, setCountries] = useState([]);
   const [profile, setProfile] = useState({});
@@ -100,7 +99,7 @@ function App() {
          {/* == AIRLINE ROUTES == */}
           <Route element={< ProtectedRoute role={'airline'}/>}>
             <Route path="/airline/flights" element={
-                <Flights airline={true} dataSource="/airlines/flights/" search={false} />
+                <Flights airline={true} dataSource="/flights/my" search={false} />
               }
             />
             <Route path="/airlines/addflight" element={

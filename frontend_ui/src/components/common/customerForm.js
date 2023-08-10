@@ -17,25 +17,25 @@ const CustomerForm = ({title, profile}) => {
     const {register, handleSubmit, formState } = useForm({resolver: yupResolver(customerSchema), defaultValues: profile});
     const {errors} = formState;
 
-    const handleAdd = (data) => {
+    const handleAdd = async (data) => {
         if (getRole() === 'admin') {
             let tempData = {...data, user_id: user.id};
-            api.post('/customers/', tempData)
-                .then(response => {
-                    toast.success('Customer created');
-                })
-                .catch(error => {
-                    toast.error(error.message);
-                });
+                await api.post('/customers/', tempData)
+                    .then(response => {
+                        toast.success('Customer created');
+                    })
+                    .catch(error => {
+                        toast.error(error.message);
+                    });
         } else {
             let tempData = {...data, user_id: getUserId()};
-            api.put('/customers/', tempData)
-                .then(response => {
-                    toast.success('Profile updated');
-                })
-                .catch(error => {
-                    toast.error(error.message);
-                });
+                await api.put('/customers/', tempData)
+                    .then(response => {
+                        toast.success('Profile updated');
+                    })
+                    .catch(error => {
+                        toast.error(error.message);
+                    });
         }
         navigate(-1);
     }
