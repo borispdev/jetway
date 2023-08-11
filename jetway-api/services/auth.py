@@ -12,7 +12,20 @@ from schemas.users import UserInput
 
 router = APIRouter
 
-SECRET_KEY = '47951131c41d1c140124537f07d6d89906030e26c26da4a4a656aa7b95ef7e87'
+def get_secret_key():
+    """
+    Get db password from password file or env. variable.
+    """
+    key = ''
+    if environ['API_KEY_FILE'] is not None:
+        with open(environ['API_KEY_FILE']) as file:
+            key = file.read()
+    else:
+        key = environ['API_KEY']
+    return key.strip()
+
+SECRET_KEY = get_secret_key()
+# SECRET_KEY = '47951131c41d1c140124537f07d6d89906030e26c26da4a4a656aa7b95ef7e87'
 ALGORITHM = 'HS256'
 ACCESS_TOKEN_EXPIRE_MINUTES = 180
 

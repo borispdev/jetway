@@ -5,13 +5,23 @@ from typing import List
 from datetime import datetime
 
 db_user = environ['DB_USER']
-db_pass = environ['DB_PASSWORD']
 db_server = environ['MYSQL_SERVER']
 db_port = environ['MYSQL_PORT']
 db_name = environ['DB_NAME']
 
-SQLALCHEMY_DATABASE_URL = f"mysql://{db_user}:{db_pass}@{db_server}:{db_port}/{db_name}"
-# SQLALCHEMY_DATABASE_URL = f"mysql://dbuser:DBjetwayU$3r@127.0.0.1:3306/jetway"
+def get_db_pass():
+    """
+    Get db password from password file or env. variable.
+    """
+    db_pass = ''
+    if environ['API_SECRET_FILE'] is not None:
+        with open(environ['DB_PASSWORD_FILE']) as file:
+            db_pass = file.read()
+    else:
+        db_pass = environ['DB_PASSWORD']
+    return db_pass.strip()
+
+SQLALCHEMY_DATABASE_URL = f"mysql://{db_user}:{get_db_pass()}@{db_server}:{db_port}/{db_name}"
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 

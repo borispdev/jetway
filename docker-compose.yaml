@@ -3,18 +3,28 @@ version: "3.8"
 services:
   db:
     image: mysql
+    container_name: jetway-db
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: dbrootpass
+      # Root password secret.
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
+      # DB password secret.
+      MYSQL_PASSWORD_FILE: /run/secrets/db_password
+      # DB name.
       MYSQL_DATABASE: jetwaydb
+      # DB user name.
       MYSQL_USER: dbuser
-      MYSQL_PASSWORD: dbpass
     ports:
       - '3306:3306'
+    secrets:
+      - db_password
+      - db_root_password
     volumes:
-      - /root/jetwaydb/jetway_empty_db.sql:/docker-entrypoint-initdb.d/jetway_empty_db.sql
-      - /root/appdata:/var/lib/mysql
+        # DB initialization file - creates database if not exists.
+      - ./db_template.sql:/docker-entrypoint-initdb.d/db_template_sql.sql
+        # Data persistance volume.
+      - jetway_db:/var/lib/mysql
   
   jetway-api:
     image: borispdev/jetway-api
@@ -25,17 +35,30 @@ services:
     environment:
       MYSQL_SERVER: db
       MYSQL_PORT: 3306
+      # App DB name.
       DB_NAME: jetwaydb
+      # DB user name.
       DB_USER: dbuser
-      DB_PASSWORD: dbpass
+      # DB password.
+      # DB_PASSWORD:
+      # DB password file (For use with docker secrets)
+      DB_PASSWORD_FILE: /run/secrets/db_password
+      # API secret key string.
+      # API_KEY:
+      # API secret key file (For use with docker secrets)
+      API_KEY_FILE: /run/secrets/api_secret
     expose:
       - 8000
+    secrets:
+      - db_password
+      - api_key
   
   jetway-ui:
     image: borispdev/jetway-ui
     container_name: jetway-ui
     environment:
-     API_URL: https://api.jet-way.cc
+      # API subdomain
+      API_URL: https://api.jet-way.cc
     restart: always
     expose:
       - 3000
@@ -44,8 +67,38 @@ services:
     image: borispdev/jetway-proxy
     container_name: jetway-proxy
     restart: always
+    environment:
+      # Application host/domain
+      NGINX_APP_HOST: jet-way.cc
+      # API host/domain
+      NGINX_API_HOST: api.jet-way.cc
+      # Server certificate secret.
+      NGINX_SERVER_CERT: /run/secrets/server_cert
+      # Server private key secret.
+      NGINX_SERVER_KEY: /run/secrets/server_priv_key
     ports:
       - '80:80'
       - '443:443'
-    volumes:
-      - /proxy/ssl:/etc/nginx/ssl
+    secrets:
+      - server_cert
+      - server_priv_key
+
+volumes:
+  jetway_db:
+
+secrets:
+  db_password:
+    # File contains nysql database password.
+    file: db_password.txt
+  db_root_password:
+    # File contains mysql root password.
+    file: db_root_password.txt
+  api_key:
+    file: api_key.txt
+  server_cert:
+    # Server certificate file.
+    file: cert.pem
+  server_priv_key:
+    # Server private key file.
+    file: privkey.pem
+

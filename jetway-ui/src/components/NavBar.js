@@ -9,6 +9,9 @@ const NavBar = ({ user }) => {
   return (
     <nav className="navbar navbar-expand-lg bg-dark navbar-dark">
       <div className="container-fluid">
+        {/* <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button> */}
         <NavLink className="navbar-brand" to="/">
           <img src={logo} height="60" width="60" alt="JetWay"/>
         </NavLink>

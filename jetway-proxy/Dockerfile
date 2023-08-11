@@ -1,10 +1,10 @@
 FROM nginx:alpine
 
-WORKDIR /etc/nginx/conf.d
+RUN rm /etc/nginx/conf.d/default.conf
 
-RUN rm default.conf
+WORKDIR /etc/nginx/templates
 
-COPY nginx.conf .
+COPY nginx.conf.template .
 
 EXPOSE 80 443
 
