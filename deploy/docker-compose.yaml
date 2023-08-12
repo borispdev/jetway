@@ -48,7 +48,7 @@ services:
       # API secret key string.
       # API_KEY:
       # API secret key file (For use with docker secrets)
-      API_KEY_FILE: /run/secrets/api_secret
+      API_KEY_FILE: /run/secrets/api_key
     expose:
       - 8000
     secrets:

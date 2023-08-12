@@ -1,9 +1,10 @@
 from abc import ABC
 from datetime import datetime
 from sql_app import countries, flights, airlines
-from sql_app.users import add_user
+from sql_app.users import add_user, get_user_by_username
 from schemas.users import UserOut, UserInput
 from schemas.airline import AirlineOut, FlightOut
+from utils.exceptions import APIException
 from .auth import get_password_hash
 
 
@@ -76,6 +77,9 @@ class BaseFacade(ABC):
 
     def create_new_user(self, user: UserInput):
         """ Register new user """
+        tmp_user = get_user_by_username(user.username)
+        if tmp_user is not None:
+            raise APIException(409, detail=f'Username {user.username} already exists.')
         pwd_hash = get_password_hash(user.password)
         new_user = add_user(username=user.username,
                             password=pwd_hash, email=user.email)

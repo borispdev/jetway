@@ -21,7 +21,7 @@ class Tickets extends Component {
                 this.formatDates(response.data);
             })
             .catch(error => {
-                toast.error(error.message);
+                toast.error(`${error.message} \n\n ${error.response.data.detail}`);
             });
     };
     

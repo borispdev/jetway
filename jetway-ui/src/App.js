@@ -16,6 +16,7 @@ import CustomerForm from "./components/common/customerForm";
 import AdminForm from "./components/common/adminForm";
 import AirlineForm from "./components/airlineForm";
 import NotFound from "./components/notFound";
+import Home from "./components/home";
 import api from "./services/api";
 import ProtectedRoute from './components/common/protectedRoute';
 export const CountriesContext = createContext('');
@@ -56,7 +57,7 @@ function App() {
               <Route path="users" element=
                 {
                   <DataAdmin dataSource='/users/' 
-                    sortColumn={{ path: "id", order: "asc" }} 
+                    sortColumn={{ path: "id", order: "asc" }}
                     entity='User'
                   />
                 } 
@@ -124,6 +125,7 @@ function App() {
           </Route>
           
           {/* == ANONYMOUS ROUTES == */}
+            <Route index element={<Home/>}/>
             <Route path="/flights"
               element={
                 <CountriesContext.Provider value={countries}>

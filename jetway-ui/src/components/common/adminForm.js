@@ -22,7 +22,7 @@ const AdminForm = () => {
                     navigate(-1)
                 })
                 .catch(error => {
-                    toast.error(error.message);
+                    toast.error(`${error.message} \n\n ${error.response.data.detail}`);
                 });
     }
     

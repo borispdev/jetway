@@ -119,7 +119,7 @@ class Flights extends Component {
     const { totalCount, data: flightsProcessed } = this.getProcessedData();
     return (
       <div className="row">
-        <div className="row mt-4">
+        <div className="row mt-4 justify-content-center">
           <FlightSearchBar
             handleSearch={this.handleSearch}
             search={this.props.search}

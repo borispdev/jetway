@@ -51,7 +51,7 @@ const FlightEditForm = ({title, isEdit}) => {
           toast.success('New flight added.');
         })
         .catch(error => {
-          toast.error(error.message);
+          toast.error(`${error.message} \n\n ${error.response.data.detail}`);
         });
     } else {
       delete data.origin;
@@ -62,7 +62,7 @@ const FlightEditForm = ({title, isEdit}) => {
           toast.success('Flight updated.');
         })
         .catch(error => {
-          toast.error(error.message);
+          toast.error(`${error.message} \n\n ${error.response.data.detail}`);
         });
     }
     navigate(-1);

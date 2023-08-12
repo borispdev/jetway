@@ -23,7 +23,7 @@ const LoginForm
          navigate('/');
          window.location.reload();
       } catch (error) {
-            toast.error(error.response.data.detail);
+            toast.error(`${error.message} \n\n ${error.response.data.detail}`);
       }
    };
 

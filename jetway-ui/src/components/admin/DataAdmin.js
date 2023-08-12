@@ -26,7 +26,7 @@ class DataAdmin extends Component {
         this.setState({data: response.data});
       })
       .catch((error) => {
-        toast.error(error);
+        toast.error(`${error.message} \n\n ${error.response.data.detail}`);
       });
   };
 
@@ -56,7 +56,7 @@ class DataAdmin extends Component {
         toast.success(`${this.props.entity} deleted.`);
       })
       .catch((error) => {
-        toast.error(error.message);
+        toast.error(`${error.message} \n\n ${error.response.data.detail}`);
       });
   };
 

@@ -14,7 +14,7 @@ def get_db_pass():
     Get db password from password file or env. variable.
     """
     db_pass = ''
-    if environ['API_SECRET_FILE'] is not None:
+    if environ['DB_PASSWORD_FILE'] is not None:
         with open(environ['DB_PASSWORD_FILE']) as file:
             db_pass = file.read()
     else:

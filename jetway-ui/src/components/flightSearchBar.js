@@ -69,7 +69,7 @@ const FlightSearchBar = ({ handleSearch, search }) => {
               errors={errors.departure?.message}
             />
           </div>
-          <div className="col">
+          <div className="col-auto">
             <button id="search" className="btn btn-primary">
               <FontAwesomeIcon icon={faMagnifyingGlass} />
             </button>

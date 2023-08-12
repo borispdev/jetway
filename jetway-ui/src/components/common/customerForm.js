@@ -25,7 +25,7 @@ const CustomerForm = ({title, profile}) => {
                         toast.success('Customer created');
                     })
                     .catch(error => {
-                        toast.error(error.message);
+                        toast.error(`${error.message} \n\n ${error.response.data.detail}`);
                     });
         } else {
             let tempData = {...data, user_id: getUserId()};
@@ -34,7 +34,7 @@ const CustomerForm = ({title, profile}) => {
                         toast.success('Profile updated');
                     })
                     .catch(error => {
-                        toast.error(error.message);
+                        toast.error(`${error.message} \n\n ${error.response.data.detail}`);
                     });
         }
         navigate(-1);
