@@ -29,9 +29,11 @@ services:
   jetway-api:
     image: borispdev/jetway-api
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     container_name: jetway-api
     command: "python main.py"
+    restart: always
     environment:
       MYSQL_SERVER: db
       MYSQL_PORT: 3306
