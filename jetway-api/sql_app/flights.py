@@ -23,9 +23,9 @@ def get_flight_by_id(flight_id):
 def get_flights_by_airline(airline_id):
     with SessionLocal() as db:
         flights = db.query(Flight)\
-            .filter_by(airline_company_id=airline_id).all()
-        logger.debug(
-            f'All flights related to airline {airline_id} retrieved from DB')
+            .filter_by(airline_company_id=airline_id)\
+            .options(joinedload(Flight.airline)).all()
+        logger.debug(f'All flights related to airline {airline_id} retrieved from DB')
     return flights
 
 

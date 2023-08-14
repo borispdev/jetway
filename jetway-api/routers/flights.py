@@ -58,7 +58,7 @@ async def delete_flight(current_user: Annotated[UserInput, Security(get_active_u
     airline_facade.remove_flight(flight_id)
     return flight_id
 
-@router.get('/flights/my', response_model=list[FlightOut])
+@router.get('/flights/my/', response_model=list[FlightOut])
 async def get_airlines_flights(current_user: Annotated[UserInput, Security(get_active_user, scopes=['airline'])]):
     """ Get all flights related to active user airline """
     flights = airline_facade.get_airline_flights(current_user.id)

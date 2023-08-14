@@ -16,7 +16,7 @@ class Flights extends Component {
     this.state = {
       flights: [],
       currentPage: 1,
-      pageSize: 5,
+      pageSize: 20,
       sortColumn: { path: "departure", order: "asc" },
     };
   }
@@ -58,7 +58,7 @@ class Flights extends Component {
       item.departure = formatDateTime(item.departure);
       item.landing = formatDateTime(item.landing);
     });
-    this.setState({ flights: items });
+    this.setState({ flights: items, currentPage: 1});
   };
 
   handleSearch = async (searchParams) => {

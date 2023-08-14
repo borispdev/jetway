@@ -34,7 +34,7 @@ function App() {
   const getCustomerProfile = async () => {
     const user = getCurrentUser();
     if (user !== null && user.scopes === 'customer') {
-       const response = await api.get('/customers/me');
+       const response = await api.get('/customers/me/');
        setProfile(response.data);
     }
  }
@@ -100,7 +100,7 @@ function App() {
          {/* == AIRLINE ROUTES == */}
           <Route element={< ProtectedRoute role={'airline'}/>}>
             <Route path="/airline/flights" element={
-                <Flights airline={true} dataSource="/flights/my" search={false} />
+                <Flights airline={true} dataSource="/flights/my/" search={false} />
               }
             />
             <Route path="/airlines/addflight" element={

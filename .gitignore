@@ -132,7 +132,9 @@ chrome-user-data
 *.swp
 *.swo
 *.pem
-
+fake_customers.json
+fake_users.json
+create_customers.py
 packages/react-devtools-core/dist
 packages/react-devtools-extensions/chrome/build
 packages/react-devtools-extensions/chrome/*.crx

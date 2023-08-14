@@ -15,7 +15,7 @@ class DataAdmin extends Component {
     this.state = {
       data: [],
       currentPage: 1,
-      pageSize: 5,
+      pageSize: 20,
       sortColumn: this.props.sortColumn,
     };
   };
@@ -37,6 +37,7 @@ class DataAdmin extends Component {
   componentDidUpdate(prevProps) {
     if (prevProps.dataSource !== this.props.dataSource) {
       this.getData(this.props.dataSource);
+      this.setState({currentPage: 1});
     }
   };
 

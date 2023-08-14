@@ -2,6 +2,7 @@ from abc import ABC
 from datetime import datetime
 from sql_app import countries, flights, airlines
 from sql_app.users import add_user, get_user_by_username
+from sql_app.database import Flight
 from schemas.users import UserOut, UserInput
 from schemas.airline import AirlineOut, FlightOut
 from utils.exceptions import APIException
@@ -27,12 +28,11 @@ class BaseFacade(ABC):
 
     def get_flight(self, id):
         """ Get flight by ID and serialize it using FlightOut model """
-        flight_db = flights.get_flight_by_id(id)
+        flight_db: Flight = flights.get_flight_by_id(id)
         origin = countries.get_country_by_id(flight_db.origin_country_id)
-        destination = countries.get_country_by_id(
-            flight_db.destination_country_id)
-        airline_name = airlines.get_airline_by_id(flight_db.airline_company_id)
-        flight = FlightOut(id=flight_db.id, airline=airline_name.name, origin=origin.country_name, destination=destination.country_name,
+        destination = countries.get_country_by_id(flight_db.destination_country_id)
+        # airline = airlines.get_airline_by_id(flight_db.airline_company_id)
+        flight = FlightOut(id=flight_db.id, airline=flight_db.airline.name, origin=origin.country_name, destination=destination.country_name,
                            departure=flight_db.departure_time, landing=flight_db.landing_time, remaining_tickets=flight_db.remaining_tickets)
         return flight
 
