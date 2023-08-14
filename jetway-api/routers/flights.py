@@ -1,6 +1,7 @@
 from typing import Annotated
 from datetime import date
 from fastapi import APIRouter, Security, status
+from fastapi_pagination import Page, paginate
 from services.airlinefacade import AirlineFacade
 from services.basefacade import BaseFacade
 from services.auth import get_active_user
@@ -11,7 +12,7 @@ router = APIRouter(tags=['Flights'])
 airline_facade = AirlineFacade()
 base_facade = BaseFacade()
 
-@router.get('/flights/', response_model=list[FlightOut], name="Get all flights",
+@router.get('/flights/', response_model=Page[FlightOut], name="Get all flights",
             description='Get all flights optionaly filtered by query string parameters')
 async def read_flights(
     origin: str | None = None,
@@ -27,8 +28,7 @@ async def read_flights(
         flights = base_facade.get_flights_by_params(origin, destination, date)
         return flights
     flights = base_facade.get_all_flights()
-    return flights
-
+    return paginate(flights)
 
 @router.get('/flights/{flight_id}', response_model=FlightOut, name="Get flight by ID")
 async def read_flight(id):
@@ -58,8 +58,8 @@ async def delete_flight(current_user: Annotated[UserInput, Security(get_active_u
     airline_facade.remove_flight(flight_id)
     return flight_id
 
-@router.get('/flights/my/', response_model=list[FlightOut])
+@router.get('/flights/my/', response_model=Page[FlightOut])
 async def get_airlines_flights(current_user: Annotated[UserInput, Security(get_active_user, scopes=['airline'])]):
     """ Get all flights related to active user airline """
     flights = airline_facade.get_airline_flights(current_user.id)
-    return flights
+    return paginate(flights)

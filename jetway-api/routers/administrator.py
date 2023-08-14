@@ -1,5 +1,6 @@
 from typing import Annotated
 from fastapi import APIRouter, Security, status
+from fastapi_pagination import Page, paginate
 from services.adminfacade import AdministratorFacade
 from schemas.admins import AdminIn, AdminOut
 from schemas.users import UserInput
@@ -9,13 +10,13 @@ from services.auth import get_active_user
 router = APIRouter(tags=['Admin'])
 admin_facade = AdministratorFacade()
 
-@router.get('/admin/', response_model=list[AdminOut], name='Get all administrators')
+@router.get('/admin/', response_model=Page[AdminOut], name='Get all administrators')
 async def get_all_administrators(current_user: Annotated[UserInput, Security(get_active_user, scopes=['admin'])]):
     """
     Create new admin account from existing user
     """
     admins = admin_facade.get_all_administrators()
-    return admins
+    return paginate(admins)
 
 @router.post('/admin/', status_code=status.HTTP_201_CREATED, response_model=AdminOut, name='Add administrator')
 async def add_administrator(

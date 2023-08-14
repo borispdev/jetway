@@ -1,6 +1,7 @@
 import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi_pagination import add_pagination
 from routers import authentication, administrator, airlines, countries, customers, flights, tickets, users
 
 # models.Base.metadata.create_all(bind=engine) -- not used: migrations managed by Alembic
@@ -34,6 +35,8 @@ app.include_router(customers.router)
 app.include_router(flights.router)
 app.include_router(tickets.router)
 app.include_router(users.router)
+
+add_pagination(app)
 
 if __name__ == '__main__':
     uvicorn.run(

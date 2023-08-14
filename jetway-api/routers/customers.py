@@ -1,5 +1,6 @@
 from typing import Annotated
 from fastapi import APIRouter, Security, status
+from fastapi_pagination import Page, paginate
 from services.adminfacade import AdministratorFacade
 from services.customerfascade import CustomerFacade
 from schemas.customer import CustomerIn, CustomerOut
@@ -11,13 +12,13 @@ router = APIRouter(tags=['Customers'])
 admin_facade = AdministratorFacade()
 customer_facade = CustomerFacade()
 
-@router.get('/customers/', response_model=list[CustomerOut], name='Get all customers')
+@router.get('/customers/', response_model=Page[CustomerOut], name='Get all customers')
 async def gel_all_customers(current_user: Annotated[UserInput, Security(get_active_user, scopes=['admin'])]):
     """ 
     Get list of all customers
     """
-    users = admin_facade.get_all_customers()
-    return users
+    customers = admin_facade.get_all_customers()
+    return paginate(customers)
 
 @router.post('/customers/', response_model=CustomerOut, status_code=status.HTTP_201_CREATED, name='Add customer')
 async def create_customer(

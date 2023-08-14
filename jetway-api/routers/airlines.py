@@ -1,5 +1,6 @@
 from typing import Annotated
 from fastapi import APIRouter, Security, status
+from fastapi_pagination import Page, paginate
 from services.basefacade import BaseFacade
 from services.adminfacade import AdministratorFacade
 from services.airlinefacade import AirlineFacade
@@ -12,7 +13,7 @@ base_facade = BaseFacade()
 admin_facade = AdministratorFacade()
 airlin_facade = AirlineFacade()
 
-@router.get('/airlines/', response_model=list[AirlineOut], name='Get all airlines')
+@router.get('/airlines/', response_model=Page[AirlineOut], name='Get all airlines')
 async def read_airlines(
     name: str | None = None,
     country: str = None
@@ -25,7 +26,7 @@ async def read_airlines(
         airlines = base_facade.get_airlines_by_params(name, country)
         return airlines
     airlines = base_facade.get_all_airlines()
-    return airlines
+    return paginate(airlines)
 
 @router.get('/airlines/{airline_id}', response_model=AirlineOut, name='Get airline by ID')
 async def read_airline(id):
