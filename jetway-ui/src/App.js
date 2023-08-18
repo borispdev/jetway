@@ -57,7 +57,7 @@ function App() {
               <Route path="users" element=
                 {
                   <DataAdmin dataSource='/users/' 
-                    sortColumn={{ path: "id", order: "asc" }}
+                    dataSortColumn={{ path: "id", order: "asc" }}
                     entity='User'
                   />
                 } 
@@ -65,7 +65,7 @@ function App() {
               <Route path="customers" element=
                 {
                   <DataAdmin dataSource='/customers/' 
-                    sortColumn={{ path: "first_name", order: "asc" }} 
+                    dataSortColumn={{ path: "first_name", order: "asc" }} 
                     entity='Customer' 
                   />
                 } 
@@ -73,7 +73,7 @@ function App() {
               <Route path="airlines" element=
                 {
                   <DataAdmin dataSource='/airlines/' 
-                    sortColumn={{ path: "name", order: "asc" }} 
+                    dataSortColumn={{ path: "name", order: "asc" }} 
                     entity='Airline' 
                   />
                 } 
@@ -81,7 +81,7 @@ function App() {
               <Route path="admins" element=
                 {
                   <DataAdmin dataSource='/admin/' 
-                    sortColumn={{ path: "first_name", order: "asc" }} 
+                    dataSortColumn={{ path: "first_name", order: "asc" }} 
                     entity='Admin'
                   />
                 } 

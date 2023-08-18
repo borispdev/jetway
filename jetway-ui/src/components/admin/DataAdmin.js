@@ -1,128 +1,151 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import _ from "lodash";
 import api from "../../services/api";
 import Pagination from "../common/pagination";
-import { paginate } from "../../services/paginate";
 import CustomersTable from "./customersTable";
 import AirlinesTable from "./airlinesTable";
 import AdminsTable from "./adminsTable";
 import UsersTable from "./usersTable";
 
-class DataAdmin extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      data: [],
-      currentPage: 1,
-      pageSize: 20,
-      sortColumn: this.props.sortColumn,
-    };
+
+const DataAdmin = ({dataSortColumn, dataSource, entity}) => {
+  
+  const [data, setData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const [pageSize, setPageSize] = useState(30);
+  const [totalPages, setTotalPages] = useState(0);
+  const [queryString, setQueryString] = useState(`${dataSource}?page=${currentPage}&size=${pageSize}`);
+  const [sortColumn, setSortColumn] = useState(dataSortColumn);
+  
+
+  const getData = async (query) => {
+    await api.get(query)
+    .then((response) => {
+      if (response.data.items.length === 0) {
+        toast.warning("No records found.");
+      } else {
+        setCurrentPage(response.data.page);
+        setTotalPages(response.data.pages);
+        setData(response.data.items);
+        setTotalItems(response.data.total);
+      }
+    })
+    .catch((error) => {
+      toast.error(`${error.message} \n\n ${error.response.data.detail}`);
+    });
+  }
+
+  const formQUery = (page, size) => {
+    const query = `${dataSource}?page=${page}&size=${size}`;
+    setQueryString(query);
+  }
+
+  useEffect(() => {
+    formQUery(currentPage, pageSize);
+  },[pageSize, currentPage]);
+
+  useEffect(() => {
+    getData(queryString);
+  }, [queryString]);
+
+  const sortData = (data, sortColumn) => {
+    const sortedData = _.orderBy(data, [sortColumn.path], [sortColumn.order]);
+    return sortedData;
   };
 
-  getData = async (endpoint) => {
-    await api.get(endpoint)
+  const handleDelete = async (id) => {
+    let tempData = [...data];
+    tempData = tempData.filter(item => item.id !== id);
+    setData(tempData);
+    await api.delete(`${dataSource}${id}`)
       .then((response) => {
-        this.setState({data: response.data});
+        toast.success(`${entity} deleted.`);
       })
       .catch((error) => {
         toast.error(`${error.message} \n\n ${error.response.data.detail}`);
       });
   };
 
-  componentDidMount = () => {
-    this.getData(this.props.dataSource);
+  const handleSort = (sortColumn) => {
+    setSortColumn(sortColumn);
   };
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.dataSource !== this.props.dataSource) {
-      this.getData(this.props.dataSource);
-      this.setState({currentPage: 1});
+  const handlePageChange = (page) => {
+    if (page === "... ") {
+      setCurrentPage(1)
+    } else if (page === " ...") {
+      setCurrentPage(totalPages)
+    } else {
+      setCurrentPage(page)
     }
   };
 
-  getProcessedData = () => {
-    const {data: allData, sortColumn, currentPage, pageSize} = this.state;
-    const sorted = _.orderBy(allData, [sortColumn.path], [sortColumn.order]);
-    const processedData = paginate(sorted, currentPage, pageSize);
-    return { totalCount: sorted.length, data: processedData };
+  const handlePageSizeChange = (e) => {
+    const firstItem = pageSize * (currentPage - 1) + 1;
+    const newSize = e.target.value
+    const newPage = Math.ceil(firstItem / newSize);
+    setPageSize(newSize);
+    handlePageChange(newPage);
   };
 
-  handleDelete = async (id) => {
-    let tempData = [...this.state.data];
-    tempData = tempData.filter(item => item.id !== id);
-    this.setState({data: tempData});
-    await api.delete(`${this.props.dataSource}${id}`)
-      .then((response) => {
-        toast.success(`${this.props.entity} deleted.`);
-      })
-      .catch((error) => {
-        toast.error(`${error.message} \n\n ${error.response.data.detail}`);
-      });
-  };
+  const sortedData = sortData(data, sortColumn);
 
-  handleSort = (sortColumn) => {
-    this.setState({ sortColumn });
-  };
 
-  handlePageChange = (page) => {
-    this.setState({ currentPage: page });
-  };
-
-  render() {
-    const { sortColumn, pageSize, currentPage } = this.state;
-    const { totalCount, data: processedData } = this.getProcessedData();
-    return (
-      <div className="row">
-        {processedData.length !== 0 ? (
+  return ( 
+    <div className="row">
+        {sortedData.length !== 0 ? (
           <>
             <div className="row mt-4">
               {this.props.entity === 'User' && 
                 <UsersTable
-                  data={processedData}
+                  data={sortedData}
                   sortColumn={sortColumn}
-                  onDelete={this.handleDelete}
-                  onSort={this.handleSort}
+                  onDelete={handleDelete}
+                  onSort={handleSort}
                 />
               }
               {this.props.entity === 'Airline' && 
                 <AirlinesTable
-                  data={processedData}
+                  data={sortedData}
                   sortColumn={sortColumn}
-                  onDelete={this.handleDelete}
-                  onSort={this.handleSort}
+                  onDelete={handleDelete}
+                  onSort={handleSort}
                 />
               }
               {this.props.entity === 'Customer' &&
                 <CustomersTable
-                  data={processedData}
+                  data={sortedData}
                   sortColumn={sortColumn}
-                  onDelete={this.handleDelete}
-                  onSort={this.handleSort}
+                  onDelete={handleDelete}
+                  onSort={handleSort}
                 />
               }
               {this.props.entity === 'Admin' &&
                 <AdminsTable
-                  data={processedData}
+                  data={sortedData}
                   sortColumn={sortColumn}
-                  onDelete={this.handleDelete}
-                  onSort={this.handleSort}
+                  onDelete={handleDelete}
+                  onSort={handleSort}
                 />
               }
             </div>
             <div className="row">
               <Pagination
-                itemsCount={totalCount}
+                itemsCount={totalItems}
+                pagesCount={totalPages}
                 pageSize={pageSize}
                 currentPage={currentPage}
-                onPageChange={this.handlePageChange}
+                sizeOptions={[10, 30, 50, 100]}
+                onPageChange={handlePageChange}
+                onSizeChange={handlePageSizeChange}
               />
             </div>
           </>
         ) : null}
       </div>
-    );
-  };
+   );
 }
-
+ 
 export default DataAdmin;
