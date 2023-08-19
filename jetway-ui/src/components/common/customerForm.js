@@ -14,7 +14,14 @@ const CustomerForm = ({title, profile}) => {
     const user = loc.state;
     
     const navigate = useNavigate();
-    const {register, handleSubmit, formState } = useForm({resolver: yupResolver(customerSchema), defaultValues: profile});
+    const {register, handleSubmit, formState } = useForm({resolver: yupResolver(customerSchema), 
+        defaultValues: {
+            'first_name': profile.first_name,
+            'last_name': profile.last_name,
+            'address': profile.address,
+            'phone_no': profile.phone_no,
+            'credit_card': profile.credit_card
+        }});
     const {errors} = formState;
 
     const handleAdd = async (data) => {

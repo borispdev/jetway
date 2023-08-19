@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import _ from "lodash";
+import { sortData } from "../../services/dataUtils";
 import api from "../../services/api";
 import Pagination from "../common/pagination";
 import CustomersTable from "./customersTable";
@@ -19,7 +20,6 @@ const DataAdmin = ({dataSortColumn, dataSource, entity}) => {
   const [queryString, setQueryString] = useState(`${dataSource}?page=${currentPage}&size=${pageSize}`);
   const [sortColumn, setSortColumn] = useState(dataSortColumn);
   
-
   const getData = async (query) => {
     await api.get(query)
     .then((response) => {
@@ -35,13 +35,18 @@ const DataAdmin = ({dataSortColumn, dataSource, entity}) => {
     .catch((error) => {
       toast.error(`${error.message} \n\n ${error.response.data.detail}`);
     });
-  }
+  };
 
   const formQUery = (page, size) => {
     const query = `${dataSource}?page=${page}&size=${size}`;
     setQueryString(query);
-  }
+  };
 
+  useEffect(() => {
+    setData([])
+    formQUery(1, pageSize);
+  }, [dataSource]);
+  
   useEffect(() => {
     formQUery(currentPage, pageSize);
   },[pageSize, currentPage]);
@@ -49,11 +54,6 @@ const DataAdmin = ({dataSortColumn, dataSource, entity}) => {
   useEffect(() => {
     getData(queryString);
   }, [queryString]);
-
-  const sortData = (data, sortColumn) => {
-    const sortedData = _.orderBy(data, [sortColumn.path], [sortColumn.order]);
-    return sortedData;
-  };
 
   const handleDelete = async (id) => {
     let tempData = [...data];
@@ -92,13 +92,12 @@ const DataAdmin = ({dataSortColumn, dataSource, entity}) => {
 
   const sortedData = sortData(data, sortColumn);
 
-
   return ( 
     <div className="row">
         {sortedData.length !== 0 ? (
           <>
             <div className="row mt-4">
-              {this.props.entity === 'User' && 
+              {entity === 'User' && 
                 <UsersTable
                   data={sortedData}
                   sortColumn={sortColumn}
@@ -106,7 +105,7 @@ const DataAdmin = ({dataSortColumn, dataSource, entity}) => {
                   onSort={handleSort}
                 />
               }
-              {this.props.entity === 'Airline' && 
+              {entity === 'Airline' && 
                 <AirlinesTable
                   data={sortedData}
                   sortColumn={sortColumn}
@@ -114,7 +113,7 @@ const DataAdmin = ({dataSortColumn, dataSource, entity}) => {
                   onSort={handleSort}
                 />
               }
-              {this.props.entity === 'Customer' &&
+              {entity === 'Customer' &&
                 <CustomersTable
                   data={sortedData}
                   sortColumn={sortColumn}
@@ -122,7 +121,7 @@ const DataAdmin = ({dataSortColumn, dataSource, entity}) => {
                   onSort={handleSort}
                 />
               }
-              {this.props.entity === 'Admin' &&
+              {entity === 'Admin' &&
                 <AdminsTable
                   data={sortedData}
                   sortColumn={sortColumn}

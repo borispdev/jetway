@@ -50,10 +50,10 @@ const AdminForm = () => {
                                 errors={errors.last_name?.message}
                             />
                         </div>
-                    <div className="d-grid mt-2 gap-2 d-md-flex justify-content-md-end">
-                        <button type='submit' className="btn btn-primary me-md-2">Save</button>
-                        <button className="btn btn-secondary" onClick={()=> navigate(-1)}>Cancel</button>
-                    </div>
+                        <div className="d-grid mt-2 gap-2 d-md-flex justify-content-md-end">
+                            <button type='submit' className="btn btn-primary me-md-2">Save</button>
+                            <button className="btn btn-secondary" onClick={()=> navigate('/admin/users')}>Cancel</button>
+                        </div>
                     </div>
                 </form>
             </fieldset>

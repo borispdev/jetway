@@ -1,11 +1,11 @@
 import { useContext } from 'react';
-import { CountriesContext } from '../App';
+import { CountriesContext } from '../../App';
 import {useNavigate, useLocation} from 'react-router-dom';
-import DataList from "./common/dataList";
-import Input from './common/input';
+import DataList from "./dataList";
+import Input from './input';
 import {toast} from 'react-toastify';
-import api from '../services/api'
-import { airlineSchema } from '../services/validations';
+import api from '../../services/api'
+import { airlineSchema } from '../../services/validations';
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 

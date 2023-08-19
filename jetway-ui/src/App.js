@@ -3,6 +3,7 @@ import "./App.css";
 import Logout from "./components/common/logout";
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider} from "react-router-dom";
 import { getCurrentUser } from "./services/authentication";
+import { toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import LoginForm from "./components/LoginForm";
 import FlightEditForm from "./components/airline/flightEditForm";
@@ -14,8 +15,7 @@ import RootLayout from "./components/rootLayout";
 import DataAdmin from "./components/admin/DataAdmin";
 import CustomerForm from "./components/common/customerForm";
 import AdminForm from "./components/common/adminForm";
-import AirlineForm from "./components/airlineForm";
-import NotFound from "./components/notFound";
+import AirlineForm from "./components/common/airlineForm";
 import Home from "./components/home";
 import api from "./services/api";
 import ProtectedRoute from './components/common/protectedRoute';
@@ -27,14 +27,20 @@ function App() {
   const [profile, setProfile] = useState({});
   
   const getCountries = async () => {
-    const response = await api.get('/countries/');
+    const response = await api.get('/countries/')
+    .catch((error) => {
+      toast.error(`${error.message} \n\n ${error.response.data.detail}`);
+     });
     setCountries(response.data);
   }
 
   const getCustomerProfile = async () => {
     const user = getCurrentUser();
     if (user !== null && user.scopes === 'customer') {
-       const response = await api.get('/customers/me/');
+       const response = await api.get('/customers/me/')
+       .catch((error) => {
+        toast.error(`${error.message} \n\n ${error.response.data.detail}`);
+       });
        setProfile(response.data);
     }
  }
@@ -118,7 +124,9 @@ function App() {
           </Route>
           {/* == CUSTOMER ROUTES == */}
           <Route element={< ProtectedRoute role={'customer'}/>}>
-            <Route path="/tickets" Component={Tickets} />
+            <Route path="/tickets" element={
+              <Tickets dataSource={'/tickets/'}/>
+            } />
             <Route path="/customer" element={
               <CustomerForm title='Update profile' profile={profile}/>
             } />

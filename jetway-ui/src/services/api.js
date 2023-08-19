@@ -1,5 +1,4 @@
 import axios from "axios";
-import { toast } from "react-toastify";
 import {getJwt} from './authentication'
 const api = axios.create({baseURL: window.__RUNTIME_CONFIG__.API_URL})
 
