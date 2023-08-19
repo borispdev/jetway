@@ -1,8 +1,9 @@
 from abc import ABC
-from datetime import datetime
+from datetime import datetime, date
 from sql_app import countries, flights, airlines
 from sql_app.users import add_user, get_user_by_username
 from sql_app.database import Flight
+from schemas import validations
 from schemas.users import UserOut, UserInput
 from schemas.airline import AirlineOut, FlightOut
 from utils.exceptions import APIException
@@ -23,28 +24,25 @@ class BaseFacade(ABC):
     def get_all_flights(self):
         """ Get all flights """
         flights_db = flights.get_flights()
-        all_flights = [self.get_flight(flight.id) for flight in flights_db]
+        all_flights=[]
+        for flight in flights_db:
+            all_flights.append(validations.flight_out(flight))
         return all_flights
 
     def get_flight(self, id):
         """ Get flight by ID and serialize it using FlightOut model """
         flight_db: Flight = flights.get_flight_by_id(id)
-        origin = countries.get_country_by_id(flight_db.origin_country_id)
-        destination = countries.get_country_by_id(flight_db.destination_country_id)
-        # airline = airlines.get_airline_by_id(flight_db.airline_company_id)
-        flight = FlightOut(id=flight_db.id, airline=flight_db.airline.name, origin=origin.country_name, destination=destination.country_name,
-                           departure=flight_db.departure_time, landing=flight_db.landing_time, remaining_tickets=flight_db.remaining_tickets)
+        flight = validations.flight_out(flight_db)
         return flight
 
-    def get_flights_by_params(self, origin: str, destination: str, date: datetime):
+    def get_flights_by_params(self, origin: str, destination: str, date):
         """ Get flights by query string parameters """
-        flights = self.get_all_flights()
-        result = []
-        for flight in flights:
-            if flight.origin.lower() == origin.lower() and\
-                    flight.destination.lower() == destination.lower() and\
-                    flight.departure.date() == date:
-                result.append(flight)
+        origin_id = countries.get_country_id_by_name(origin)
+        destination_id = countries.get_country_id_by_name(destination)
+        flights_db = flights.find_flights(origin_id, destination_id, date)
+        result=[]
+        for flight in flights_db:
+            result.append(validations.flight_out(flight))
         return result
 
     def get_all_airlines(self):

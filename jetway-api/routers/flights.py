@@ -26,9 +26,10 @@ async def read_flights(
     """
     if origin and destination and date:
         flights = base_facade.get_flights_by_params(origin, destination, date)
-        return flights
-    flights = base_facade.get_all_flights()
-    return paginate(flights)
+        return paginate(flights)
+    else:
+        flights = base_facade.get_all_flights()
+        return paginate(flights)
 
 @router.get('/flights/{flight_id}', response_model=FlightOut, name="Get flight by ID")
 async def read_flight(id):

@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, func
 from .database import SessionLocal, Country
 
 
@@ -14,7 +14,7 @@ def get_country_by_id(country_id):
             id=country_id)).scalar_one()
     return country
 
-def get_country_id_by_name(country_name):
+def get_country_id_by_name(country_name: str):
     with SessionLocal() as db:
-        country = db.query(Country).filter_by(country_name=country_name).first()
+        country = db.query(Country).filter(func.lower(Country.country_name) == func.lower(country_name)).first()
     return country.id

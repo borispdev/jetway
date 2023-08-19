@@ -1,5 +1,5 @@
 from logger import logger
-from sqlalchemy import select
+from sqlalchemy import select, cast, Date, func
 from sqlalchemy.orm import joinedload
 from schemas.airline import AirlineInput, FlightIn, FlightUpdate
 from .database import SessionLocal, Flight
@@ -7,10 +7,17 @@ from .database import SessionLocal, Flight
 
 def get_flights():
     with SessionLocal() as db:
-        flights = db.query(Flight).all()
+        flights = db.query(Flight).options(joinedload(Flight.airline)).all()
         logger.debug('All flights retrieved from DB')
     return flights
 
+def find_flights(origin_id, destination_id, departure):
+    with SessionLocal() as db:
+        flights = db.query(Flight).options(joinedload(Flight.airline))\
+            .filter_by(origin_country_id = origin_id,
+                    destination_country_id = destination_id)\
+            .filter(cast(Flight.departure_time, Date) == departure).all()
+    return flights
 
 def get_flight_by_id(flight_id):
     with SessionLocal() as db:
