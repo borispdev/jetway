@@ -6,24 +6,26 @@ import {useForm} from 'react-hook-form'
 import {toast} from 'react-toastify'
 import {yupResolver} from '@hookform/resolvers/yup'
 
-const LoginForm
- = () => {
+// user login form component.
+const LoginForm = () => {
    
-   const {register, handleSubmit, formState } = useForm({resolver: yupResolver(loginSchema)});
-   const {errors} = formState;
+   const {register, handleSubmit, formState } = useForm({resolver: yupResolver(loginSchema)}); // useForm initialization
+   const {errors} = formState; // useForm errors object
    const navigate = useNavigate();
    
+   // call api /token endpoint and pass credentials as form data per OAuth2 requirement 
    const handleLogin = async (data) => {
       try {
          const form_data = new FormData();
          form_data.append('username', data.username);
          form_data.append('password', data.password);
          const {data: jwt } = await login(form_data);
-         localStorage.setItem('token', jwt.access_token);
+         localStorage.setItem('token', jwt.access_token); // store recieved token in browsers local storage.
+         // navigate to home page and refresh to get user info
          navigate('/');
          window.location.reload();
       } catch (error) {
-            toast.error(`${error.message} \n\n ${error.response.data.detail}`);
+            toast.error(`${error.message} \n\n ${error.response.data.detail}`); // error message.
       }
    };
 

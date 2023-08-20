@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 
 
 class APIException(HTTPException):
-    """General API exception"""
+    """General API exception as customized HTTP exception"""
 
     def __init__(self, status_code: int, detail: Any = None, headers: Dict[str, str] | None = None) -> None:
         super().__init__(status_code, detail, headers)

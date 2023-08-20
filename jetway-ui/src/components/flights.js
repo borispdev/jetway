@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import _ from "lodash";
+import { sortData } from "../services/dataUtils";
 import { formatDateTime } from "../services/dateFormat";
 import api from "../services/api";
 import moment from "moment";
@@ -8,16 +9,21 @@ import FlightsTable from "./common/flightsTable";
 import FlightSearchBar from "./flightSearchBar";
 import Pagination from "./common/pagination";
 
+// Flights component
 const Flights = ({dataSource, search, airline}) => {
+  
+  // dataSource - api base path.
+  // search - show search component.
+  // airline - enable airline mode.
+  const [flights, setFlights] = useState([]); // flights data
+  const [currentPage, setCurrentPage] = useState(1); // current page
+  const [totalItems, setTotalItems] = useState(0); // total records quantity from api
+  const [pageSize, setPageSize] = useState(30); // page size from api
+  const [totalPages, setTotalPages] = useState(0); // total pages from api
+  const [queryString, setQueryString] = useState(`${dataSource}?page=${currentPage}&size=${pageSize}`); // query string template.
+  const [sortColumn, setSortColumn] = useState({ path: "departure", order: "asc" }); // default sort column.
 
-  const [flights, setFlights] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalItems, setTotalItems] = useState(0);
-  const [pageSize, setPageSize] = useState(30);
-  const [totalPages, setTotalPages] = useState(0);
-  const [queryString, setQueryString] = useState(`${dataSource}?page=${currentPage}&size=${pageSize}`);
-  const [sortColumn, setSortColumn] = useState({ path: "departure", order: "asc" });
-
+  // get flights data from api.
   const getData = async (query) => {
    await api.get(query)
     .then((response) => {
@@ -35,19 +41,23 @@ const Flights = ({dataSource, search, airline}) => {
     });
   }
 
+  // Assemble query string
   const formQuery = (search, page, size) => {
     const query = `${dataSource}?page=${page}&size=${size}${search}`;
     setQueryString(query)
   }
 
+  // Reassemble query string on page or page size change.
   useEffect(() => {
     formQuery('', currentPage, pageSize);
   }, [pageSize, currentPage]);
 
+  // Query api on query string change.
   useEffect(() => {
     getData(queryString);
   }, [queryString]);
   
+  // Format flights dates from ISO to more readable format.
   const formatDates = (items) => {
     items.forEach((item) => {
       item.departure = formatDateTime(item.departure);
@@ -56,6 +66,7 @@ const Flights = ({dataSource, search, airline}) => {
     setFlights(items);
   };
 
+  // Search button click handler
   const handleSearch = async (searchParams) => {
     if (
       searchParams.origin === "" ||
@@ -64,16 +75,14 @@ const Flights = ({dataSource, search, airline}) => {
     ) {
       toast.error("Please fill in the serch parameters.");
     } else {
+      // search using only date part of datetime
       searchParams.departure = moment(searchParams.departure).format('YYYY-MM-DD');
+      // reassemble query string with search parameters.
       formQuery(`&origin=${searchParams.origin}&destination=${searchParams.destination}&date=${searchParams.departure}`,1 ,pageSize);
     }
   };
 
-  const sortData = (flights, sortColumn) => {
-    const sortedData = _.orderBy(flights, [sortColumn.path], [sortColumn.order]);
-    return sortedData
-  };
-
+  // Delete flight api call
   const handleDelete = async (id) => {
     let tempFlights = [...flights];
     tempFlights = tempFlights.filter(flight => flight.id !== id);
@@ -87,6 +96,7 @@ const Flights = ({dataSource, search, airline}) => {
         });
   };
 
+  // Call api to buy ticket.
   const handleBooking = async (id) => {
     await api.post("/tickets/", { flight_id: id })
       .then((response) => {
@@ -97,10 +107,12 @@ const Flights = ({dataSource, search, airline}) => {
       });
   };
 
+  // sort column change
   const handleSort = (sortColumn) => {
     setSortColumn(sortColumn);
   };
 
+  // current page change
   const handlePageChange = (page) => {
     if (page === "... ") {
       setCurrentPage(1)
@@ -110,7 +122,8 @@ const Flights = ({dataSource, search, airline}) => {
       setCurrentPage(page)
     }
   };
-
+  
+  // change page size and recalculate new page.
   const handlePageSizeChange = (e) => {
     const firstItem = pageSize * (currentPage - 1) + 1;
     const newSize = e.target.value

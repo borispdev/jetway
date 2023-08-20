@@ -8,16 +8,17 @@ import TicketsBadge from "./ticketsBadge";
 import DeleteButton from "./deleteButton";
 import EditButton from "./editButton";
 
+// Parent control for displaying flights table.
 const FlightsTable = ({
-  data,
-  onDelete,
-  onPurchase,
-  sortColumn,
-  onSort,
-  airline,
+  data, // flights data from API.
+  onDelete, // on flight delete function prop.
+  onPurchase, // on ticket book function prop.
+  sortColumn, // current sort column.
+  onSort, // Set current sort column function.
+  airline, // Display table in airline mode with edit and delete options.
 }) => {
   const [columns, setColumns] = useState([]);
-  const profile = useContext(ProfileContext);
+  const profile = useContext(ProfileContext); // Get user profile from context.
 
   const defaultColumns = [
     { path: "airline", label: "Airline" },
@@ -27,6 +28,7 @@ const FlightsTable = ({
     { path: "landing", label: "Landing time" },
   ];
 
+  // Determine which columns to display based on user.
   useEffect(() => {
     const deleteColumn = {
       key: "delete",
@@ -51,25 +53,29 @@ const FlightsTable = ({
           param={item.remaining_tickets}
           qty={0}
           onBuy={() => onPurchase(item.id)}
+          // if user profile missing credit card, button is disabled.
           isDisabled={profile.credit_card === null ? true : false }
         />
       )
     };
 
+    // Show remaining tickets as badge.
     const badgeColumn = {
       path: "remaining_tickets",
       label: "Tickets",
       content: (item) => <TicketsBadge tickets={item.remaining_tickets} />,
     };
 
+  
     const user = getCurrentUser();
 
+    // airline diplay columns.
     if (airline) {
       defaultColumns.push(badgeColumn);
       defaultColumns.push(editColumn);
       defaultColumns.push(deleteColumn);
     }
-
+    // customer display columns.
     if (user && user.scopes === "customer") {
       defaultColumns.push(buyColumn);
     }
@@ -78,6 +84,7 @@ const FlightsTable = ({
 
   return (
     <div className="col">
+      {/* if user is airline add flight "+" button is displayed */}
       {airline && 
           <div className="row">
             <AddButton to="/airlines/addflight" />

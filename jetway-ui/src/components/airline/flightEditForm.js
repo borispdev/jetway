@@ -12,20 +12,24 @@ import DatePicker from "../common/datePicker";
 import api from "../../services/api";
 import NumberInput from "../common/numberInput";
 
+// Form for creating new or editing existing flight.
 const FlightEditForm = ({title, isEdit}) => {
+  // title - form <legend> caption.
+  // isEdit - Sets form in flight edit mode (true) or new flight (false).
   const loc = useLocation();
   const navigate = useNavigate();
-  const flightData = loc.state; 
-  const countries = useContext(CountriesContext);
-  const [minDate, setMinDate] = useState(null);
+  const flightData = loc.state; // flight data passed through React router useLocation hook.
+  const countries = useContext(CountriesContext); // countries passed as context.
+  const [minDate, setMinDate] = useState(null); // min. date for date picker control.
 
-  const {register, handleSubmit, formState, getValues, reset } = useForm({resolver: yupResolver(flightSchema)});
-  const {errors} = formState;
+  const {register, handleSubmit, formState, getValues, reset } = useForm({resolver: yupResolver(flightSchema)}); // useForm hook initialization.
+  const {errors} = formState; // form validation errors object, part of useForm.
   
   useEffect(() => {
     limitDate();
   }, []);
 
+  // set fields default values on load (in edit mode only)
   useEffect(() => {
     if (isEdit) {
       reset({
@@ -38,13 +42,15 @@ const FlightEditForm = ({title, isEdit}) => {
     }
   },[flightData])
   
+  // set "Now" as min. datetime.
   function limitDate() {
     let date = moment().format('YYYY-MM-DDTHH:mm');
     setMinDate(date);
   }
   
+  // Query API on form submit to add or edit flight.
   const handleAdd = async (data) => {
-  
+    // add new flight.
     if (isEdit === false) {
       await api.post('/flights/', data)
         .then(response => {
@@ -54,6 +60,7 @@ const FlightEditForm = ({title, isEdit}) => {
           toast.error(`${error.message} \n\n ${error.response.data.detail}`);
         });
     } else {
+      // update existing.
       delete data.origin;
       delete data.destination;
       const updatedFlight = {id: flightData.id, ...data};
@@ -65,7 +72,7 @@ const FlightEditForm = ({title, isEdit}) => {
           toast.error(`${error.message} \n\n ${error.response.data.detail}`);
         });
     }
-    navigate(-1);
+    navigate(-1); // Go back
   }
 
   function handleCancel(e) {
@@ -79,6 +86,7 @@ const FlightEditForm = ({title, isEdit}) => {
       <fieldset className="col-6 mt-2">
         <legend>{title}</legend>
         <form className="row" onSubmit={handleSubmit(handleAdd)}>
+          {/* In edit mode origin and destination countries are disabled */}
           <div className="row mt-2">
               <div className="col">
                   <DataList
@@ -89,7 +97,7 @@ const FlightEditForm = ({title, isEdit}) => {
                     register={register}
                     isReadonly={isEdit}
                     isDisabled={isEdit}
-                    errors={errors.origin?.message}
+                    errors={errors.origin?.message} // Display "yup" validation errors. 
                   />
               </div>
               <div className="col">
@@ -131,7 +139,7 @@ const FlightEditForm = ({title, isEdit}) => {
                   label='Remaining tickets:'
                   name='remaining_tickets'
                   min='0'
-                  max='900'
+                  max='853' // Airbus A380 max. certified capacity of 853 passengers.
                   register={register}
                   errors={errors.remaining_tickets?.message}
                 />

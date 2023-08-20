@@ -3,6 +3,8 @@ import { Outlet } from "react-router-dom";
 import { ToastContainer} from "react-toastify";
 import NavBar from "./NavBar";
 import { getCurrentUser } from "../services/authentication";
+
+// main layout component to render toast container, navbar and everything else.
 const RootLayout = () => {
     const [user, setUser] = useState(null);
     

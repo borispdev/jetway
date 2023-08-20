@@ -1,10 +1,12 @@
 import Table from "../common/table";
 import DeleteButton from "../common/deleteButton";
+
+//Parent component for rendering admin airlines table.
 const AirlinesTable = ({
-  data,
-  onDelete,
-  sortColumn,
-  onSort,
+  data, // Data fetched from api.
+  onDelete, // Delete function of parent component.
+  sortColumn, // Current column by which items are sorted.
+  onSort, // Sort function from parent component.
 }) => {
 
   const columns = [

@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
+
+// Badge component with style dependant on tickets quantity.
 const TicketsBadge = ({ tickets }) => {
+  
+  // tickets - tickets number.
   const [badgeClass, setBadgeClass] = useState("badge text-bg-primary");
   const [badgeNumber, setBadgeNumber] = useState(tickets);
 

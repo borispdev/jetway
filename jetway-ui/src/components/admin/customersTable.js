@@ -1,12 +1,12 @@
 import Table from "../common/table";
-import AddButton from "../airline/addButton";
 import DeleteButton from "../common/deleteButton";
+
+//Parent component for rendering admin customers table.
 const CustomersTable = ({
-  data,
-  onDelete,
-  sortColumn,
-  onSort,
-  airline,
+  data, // Data fetched from api.
+  onDelete, // Delete function of parent component.
+  sortColumn, // Current column by which items are sorted.
+  onSort, // Sort function from parent component.
 }) => {
 
   const columns = [
@@ -30,11 +30,6 @@ const CustomersTable = ({
 
   return (
     <div className="col">
-      {airline && 
-          <div className="row">
-            <AddButton to="/airlines/addflight" />
-          </div>
-      }
       <div className="row">
         <Table
           data={data}

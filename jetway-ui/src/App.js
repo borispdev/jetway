@@ -19,40 +19,50 @@ import AirlineForm from "./components/common/airlineForm";
 import Home from "./components/home";
 import api from "./services/api";
 import ProtectedRoute from './components/common/protectedRoute';
+// Contexts creation
 export const CountriesContext = createContext('');
 export const ProfileContext = createContext('');
 
 function App() {
-  const [countries, setCountries] = useState([]);
-  const [profile, setProfile] = useState({});
+  const [countries, setCountries] = useState([]); // countries list state.
+  const [profile, setProfile] = useState({}); // current profile state.
   
+  // call api to get countries list.
   const getCountries = async () => {
-    const response = await api.get('/countries/')
+    await api.get('/countries/')
+    .then((response) => {
+      setCountries(response.data);
+    })
     .catch((error) => {
       toast.error(`${error.message} \n\n ${error.response.data.detail}`);
      });
-    setCountries(response.data);
   }
 
+  // get current customer profile from api
   const getCustomerProfile = async () => {
     const user = getCurrentUser();
     if (user !== null && user.scopes === 'customer') {
-       const response = await api.get('/customers/me/')
+       await api.get('/customers/me/')
+       .then((response) => {
+         setProfile(response.data);
+       })
        .catch((error) => {
         toast.error(`${error.message} \n\n ${error.response.data.detail}`);
        });
-       setProfile(response.data);
     }
  }
   
+  // get countries on render.
   useEffect(() => {
     getCountries();
   }, []);
   
+  // get profile on render.
   useEffect(() => {
     getCustomerProfile();
   },[])
   
+  // create router
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<RootLayout />}>
@@ -141,7 +151,6 @@ function App() {
                     <Flights airline={false} dataSource="/flights/" search={true} />
                   </ProfileContext.Provider>
                 </CountriesContext.Provider>
-              
               }
             />
           <Route path="/logout" Component={Logout} />

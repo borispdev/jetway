@@ -8,13 +8,16 @@ import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import { getUserId } from "../../services/authentication";
 
-
+// Customer profile form used for creating new or updating existing customer profile.
 const CustomerForm = ({title, profile}) => {
+    // title - Form <legend> caption.
+    // profile - existing customer profile in case of updating.
     const loc = useLocation();
-    const user = loc.state;
-    
+    const user = loc.state; // user data passed through React router in useLocation hook.
     const navigate = useNavigate();
+    // useForm initialization with "yup" validations.
     const {register, handleSubmit, formState } = useForm({resolver: yupResolver(customerSchema), 
+        // Populating form with existing profile data.
         defaultValues: {
             'first_name': profile.first_name,
             'last_name': profile.last_name,
@@ -23,28 +26,30 @@ const CustomerForm = ({title, profile}) => {
             'credit_card': profile.credit_card
         }});
     const {errors} = formState;
-
+    // Query API and add new customer or update existing on form submit
     const handleAdd = async (data) => {
+        // Create new if admin.
         if (getRole() === 'admin') {
             let tempData = {...data, user_id: user.id};
                 await api.post('/customers/', tempData)
                     .then(response => {
-                        toast.success('Customer created');
+                        toast.success('Customer created'); //Create message.
                     })
                     .catch(error => {
                         toast.error(`${error.message} \n\n ${error.response.data.detail}`);
                     });
+        // Update existing profile.            
         } else {
             let tempData = {...data, user_id: getUserId()};
                 await api.put('/customers/', tempData)
                     .then(response => {
-                        toast.success('Profile updated');
+                        toast.success('Profile updated'); //Update message.
                     })
                     .catch(error => {
                         toast.error(`${error.message} \n\n ${error.response.data.detail}`);
                     });
         }
-        navigate(-1);
+        navigate(-1); // Go back in any case (success or error).
     }
     
     return ( 

@@ -50,7 +50,7 @@ def get_customer_tickets(customer_id):
 
 def get_customer_by_user_id(user_id):
     with SessionLocal() as db:
-        customer = db.query(Customer).filter_by(user_id=user_id).first()
+        customer = db.query(Customer).options(joinedload(Customer.user)).filter_by(user_id=user_id).first()
     return customer
 
 

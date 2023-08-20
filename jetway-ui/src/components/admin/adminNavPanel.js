@@ -3,8 +3,12 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faBriefcase, faCartShopping, faPlane } from "@fortawesome/free-solid-svg-icons";
 
+
+// Admin page left side menu panel
 const AdminNavPanel = () => {
     const [currentItem, setCurrentItem] = useState(0)
+    
+    // reference array to determine the active choice.
     const id = ['0','1','2','3'];
 
     const handleClick = e => {

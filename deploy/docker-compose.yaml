@@ -12,9 +12,9 @@ services:
       # DB password secret.
       MYSQL_PASSWORD_FILE: /run/secrets/db_password
       # DB name.
-      MYSQL_DATABASE: jetwaydb
+      MYSQL_DATABASE: dbjetway
       # DB user name.
-      MYSQL_USER: dbuser
+      MYSQL_USER: userdb
     ports:
       - '3306:3306'
     secrets:
@@ -29,8 +29,7 @@ services:
   jetway-api:
     image: borispdev/jetway-api
     depends_on:
-      db:
-        condition: service_healthy
+      - db
     container_name: jetway-api
     command: "python main.py"
     restart: always
@@ -38,9 +37,9 @@ services:
       MYSQL_SERVER: db
       MYSQL_PORT: 3306
       # App DB name.
-      DB_NAME: jetwaydb
+      DB_NAME: dbjetway
       # DB user name.
-      DB_USER: dbuser
+      DB_USER: userdb
       # DB password.
       # DB_PASSWORD:
       # DB password file (For use with docker secrets)
@@ -49,11 +48,16 @@ services:
       # API_KEY:
       # API secret key file (For use with docker secrets)
       API_KEY_FILE: /run/secrets/api_key
+      # Data encryption key.
+      # ENCRYPTION_KEY:
+      # Data encryption key file.
+      ENCRYPTION_KEY_FILE: /run/secrets/encryption_key
     expose:
       - 8000
     secrets:
       - db_password
       - api_key
+      - encryption_key
   
   jetway-ui:
     image: borispdev/jetway-ui
@@ -95,12 +99,15 @@ secrets:
   db_root_password:
     # File contains mysql root password.
     file: db_root_password.txt
+  # API password hash key.
   api_key:
     file: api_key.txt
+  # API data encryption key.
+  encryption_key:
+    file: encryption_key.txt
   server_cert:
     # Server certificate file.
     file: cert.pem
   server_priv_key:
     # Server private key file.
     file: privkey.pem
-

@@ -1,6 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faCreditCard} from "@fortawesome/free-solid-svg-icons";
 
+// Purchase button with "credit card icon",
 const BuyButton = ({param, qty, onBuy, isDisabled}) => {
 
     if (param === qty) {

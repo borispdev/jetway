@@ -1,21 +1,23 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faSortUp, faSortDown} from '@fortawesome/free-solid-svg-icons'
 
-const TableHeader = (props) => {
-    
+// Table header component.
+const TableHeader = ({sortColumn, columns, onSort}) => {
+   
+    // Determine sort column and order to raise onSort.
    function raiseSort(path) {
-        const sortColumn = {...props.sortColumn};
-        if (sortColumn.path === path) {
-            sortColumn.order = sortColumn.order === "asc" ? "desc" : "asc";
+        const tempSortColumn = {...sortColumn};
+        if (tempSortColumn.path === path) {
+            tempSortColumn.order = tempSortColumn.order === "asc" ? "desc" : "asc";
         } else {
-            sortColumn.path = path;
-            sortColumn.order = "asc";
+            tempSortColumn.path = path;
+            tempSortColumn.order = "asc";
         }
-        props.onSort(sortColumn);
+        onSort(tempSortColumn);
     };
 
+    // render icon matching sort order.
    function renderSortIcon(column) {
-        const { sortColumn } = props
         if (column.path !== sortColumn.path) return null;
         if (sortColumn.order === 'asc') return <FontAwesomeIcon icon={faSortUp} />;
         return <FontAwesomeIcon icon={faSortDown} />;
@@ -24,7 +26,7 @@ const TableHeader = (props) => {
         return ( 
         <thead>
             <tr>
-                {props.columns.map(column => (
+                {columns.map(column => (
                     <th 
                         className='clickable'
                         key={column.path || column.key} 

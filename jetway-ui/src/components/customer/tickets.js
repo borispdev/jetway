@@ -1,4 +1,4 @@
-import React, { Component, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { sortData } from "../../services/dataUtils";
 import { toast } from "react-toastify";
 import _ from 'lodash';
@@ -6,15 +6,17 @@ import api from "../../services/api";
 import Pagination from "../common/pagination";
 import TicketsTable from './../common/ticketsTable';
 
+// Customers tickets component
 const Tickets = ({dataSource}) => {
-    const [tickets, setTickets] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalItems, setTotalItems] = useState(0);
-    const [pageSize, setPageSize] = useState(10);
-    const [totalPages, setTotalPages] = useState(0);
-    const [queryString, setQueryString] = useState(`${dataSource}?page=${currentPage}&size=${pageSize}`);
-    const [sortColumn, setSortColumn] = useState({ path: "departure", order: "asc" });
+    const [tickets, setTickets] = useState([]); // tickets data
+    const [currentPage, setCurrentPage] = useState(1); // current page.
+    const [totalItems, setTotalItems] = useState(0); // total records quantity.
+    const [pageSize, setPageSize] = useState(10); // items per page size.
+    const [totalPages, setTotalPages] = useState(0); // total pages.
+    const [queryString, setQueryString] = useState(`${dataSource}?page=${currentPage}&size=${pageSize}`); // query string template.
+    const [sortColumn, setSortColumn] = useState({ path: "departure", order: "asc" }); // default sort column.
     
+    // Get tickets from api.
     const getData = async (query) => {
         await api.get(query)
         .then((response) => {
@@ -32,19 +34,23 @@ const Tickets = ({dataSource}) => {
         });
     };
     
+    // Assemble query string function.
     const formQuery = (page, size) => {
         const query = `${dataSource}?page=${page}&size=${size}`;
         setQueryString(query);
     };
 
+    // Change query string on page or page size change.
     useEffect(() => {
         formQuery(currentPage, pageSize);
       },[pageSize, currentPage]);
     
+    // get new data from api on query string change. 
     useEffect(() => {
         getData(queryString);
     }, [queryString]);
 
+    // delete ticket.
     const handleDelete = async (id) => {
         let tempData = [...tickets];
         tempData = tempData.filter(item => item.id !== id);
@@ -58,10 +64,12 @@ const Tickets = ({dataSource}) => {
         });    
     };
 
+    // change sort column
     const handleSort = (sortColumn) => {
         setSortColumn(sortColumn);
     };
 
+    // change current page
     const handlePageChange = (page) => {
         if (page === "... ") {
         setCurrentPage(1)
@@ -71,7 +79,8 @@ const Tickets = ({dataSource}) => {
         setCurrentPage(page)
         }
     };
-      
+    
+    // change page size and recalculate new current page
     const handlePageSizeChange = (e) => {
         const firstItem = pageSize * (currentPage - 1) + 1;
         const newSize = e.target.value
@@ -79,7 +88,8 @@ const Tickets = ({dataSource}) => {
         setPageSize(newSize);
         handlePageChange(newPage);
     };
-      
+    
+    // sort data
     const sortedData = sortData(tickets, sortColumn);
 
     return ( 

@@ -9,22 +9,26 @@ import { airlineSchema } from '../../services/validations';
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 
+// Add new airline form.
 const AirlineForm = () => {
     const loc = useLocation();
-    const user = loc.state;
+    const user = loc.state; // user data passed through React router in useLocation hook.
     const countries = useContext(CountriesContext)
     const navigate = useNavigate();
+    // useForm initialization with "yup" validations.
     const {register, handleSubmit, formState } = useForm({resolver: yupResolver(airlineSchema)});
-    const {errors} = formState;
+    const {errors} = formState; // errors object of useForm.
 
+    // Query API and add new airline on form submit
     const handleAdd = async (data) => {
             let tempData = ({...data, user_id: user.id});
             await api.post('/airlines/', tempData)
                 .then(response => {
                     toast.success('Airline created');
-                    navigate(-1)
+                    navigate(-1) // Go back on success.
                 })
                 .catch(error => {
+                    // Display API error.
                     toast.error(`${error.message} \n\n ${error.response.data.detail}`);
                 });
         }

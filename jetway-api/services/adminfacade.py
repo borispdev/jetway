@@ -1,13 +1,12 @@
 from logger import logger
-from schemas.customer import CustomerIn, CustomerOut
-from schemas.airline import AirlineInput, AirlineOut
-from schemas.admins import AdminIn, AdminOut
-from schemas.users import UserOutAdmin
+from schemas.customer import CustomerIn
+from schemas.airline import AirlineInput
+from schemas.admins import AdminIn
+from schemas.validations import admin_out, user_out_admin, customer_out, airline_out
 from utils.exceptions import APIException
 from sql_app import admin, users, airlines, customers, countries
 from sql_app.admin import get_administrators
 from .basefacade import BaseFacade
-from .validators import check_user_not_exists
 
 
 class AdministratorFacade(BaseFacade):
@@ -16,19 +15,14 @@ class AdministratorFacade(BaseFacade):
         admins_db = get_administrators()
         admins_list = []
         for admin in admins_db:
-            temp_admin = AdminOut(id=admin.id, user_id=admin.user_id, username=admin.user.username, 
-                                  first_name=admin.first_name, last_name=admin.last_name)
-            admins_list.append(temp_admin)
+            admins_list.append(admin_out(admin))
         return admins_list
     
     def get_all_users(self):
         users_db = admin.get_all_users()
         users_list = []
         for user in users_db:
-            if user.role.role_name is None:
-                user.role.role_name = 'unasigned'
-            tmp_user = UserOutAdmin(id=user.id, username=user.username, email=user.email, role_name=user.role.role_name)
-            users_list.append(tmp_user)
+            users_list.append(user_out_admin(user))
         return users_list
 
     
@@ -36,10 +30,7 @@ class AdministratorFacade(BaseFacade):
         customers = admin.get_all_customers()
         customers_list = []
         for customer in customers:
-            tmp_customer = CustomerOut(id=customer.id, user_id=customer.user_id, username=customer.user.username, 
-                                       first_name=customer.first_name, last_name=customer.last_name, address=customer.address, 
-                                       phone_no=customer.phone_no, credit_card=customer.credit_card)
-            customers_list.append(tmp_customer)
+            customers_list.append(customer_out(customer))
         return customers_list
 
     def add_customer(self, customer: CustomerIn):
@@ -75,10 +66,8 @@ class AdministratorFacade(BaseFacade):
         country_id = countries.get_country_id_by_name(airline.country)
         new_airline = admin.add_airline(airline.name, country_id, airline.user_id)
         admin.update_role(new_airline.user_id, 2)
-        created = airlines.get_airline_by_user_id(airline.user_id)
-        airline = AirlineOut(id=created.id, name=created.name,
-                             country=created.country.country_name)
-        return airline
+        airline = airlines.get_airline_by_user_id(airline.user_id)
+        return airline_out(airline)
 
     def remove_airline(self, airline_id):
         # ADD CHECK FOR ACTIVE FLIGHTS #

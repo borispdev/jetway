@@ -1,5 +1,6 @@
 from utils.exceptions import APIException
-from schemas.airline import FlightIn, FlightUpdate, AirlineInput, FlightOut
+from schemas.airline import FlightIn, FlightUpdate, AirlineInput
+from schemas.validations import flight_out
 from sql_app import flights, airlines, countries
 from .validators import check_flight_times, check_flight_owner, check_airline_account_owner
 from .basefacade import BaseFacade
@@ -14,7 +15,6 @@ class AirlineFacade(BaseFacade):
         Create nw flight
         """
         check_flight_times(flight.departure_time, flight.landing_time)
-        # ADD DUPLICATE FLIGHT VALIDATION #
         airline = airlines.get_airline_by_user_id(user_id)
         origin_id = countries.get_country_id_by_name(flight.origin)
         destination_id = countries.get_country_id_by_name(flight.destination)
@@ -40,15 +40,13 @@ class AirlineFacade(BaseFacade):
 
     def get_airline_flights(self, user_id):
         """ Get all flights related to active user airline """
-        # try:
         airline = airlines.get_airline_by_user_id(user_id)
         airline_flights = flights.get_flights_by_airline(airline.id)
-        # except AttributeError:
-        #     raise APIException(status_code=400, detail="No airline found associated with your user")
         flights_found = []
         for flight in airline_flights:
-            airline_flight = self.get_flight(flight.id)
-            flights_found.append(airline_flight)
+            # airline_flight = self.get_flight(flight.id)
+            # flights_found.append(airline_flight)
+            flights_found.append(flight_out(flight))
         return flights_found
 
     def update_airline(self, user_id, airline: AirlineInput):

@@ -6,22 +6,26 @@ import { registerUserSchema } from '../../services/validations';
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 
+// User register form.
 const NewUserForm = () => {
     const navigate = useNavigate();
+    // useForm initialization with "yup" validations.
     const {register, handleSubmit, formState } = useForm({resolver: yupResolver(registerUserSchema)});
-    const {errors} = formState;
+    const {errors} = formState; // errors object of user form.
 
-
+    // Query API and add new user on form submit
     const handleAdd = async (data) => {
         delete data.confirmPassword;
-            await api.post('/users/', data)
-                .then((response) => {
-                    navigate('/login');
-                    toast.success('Registration successful, you can now login.');
-                })
-                .catch((error) => {
+        await api.post('/users/', data)
+            .then((response) => {
+                // redirect user to login page on success
+                navigate('/login');
+                toast.success('Registration successful, you can now login.');
+            })
+            .catch((error) => {
+                // Display API error.
                 toast.error(`${error.message} \n\n ${error.response.data.detail}`); 
-                });
+            });
     }
 
     return (

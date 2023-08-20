@@ -4,8 +4,10 @@ import { faUser} from "@fortawesome/free-regular-svg-icons";
 import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons'
 import logo from '../img/logo.png'
 
+// App navbar
 const NavBar = ({ user }) => {
-
+  // user - user info decoded from jwt token.
+  // Items rendered based on user role (scopes) and state (loged in or not).
   return (
     <nav className="navbar navbar-expand-lg bg-dark navbar-dark">
       <div className="container-fluid">

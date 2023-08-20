@@ -6,6 +6,7 @@ import samKolder from '../img/stock/sam-kolder.jpg'
 import tarynElliott from '../img/stock/taryn-elliott.jpg'
 import vincentRivaud from '../img/stock/vincent-rivaud.jpg'
 
+// home page placeholder with sample cards.
 const Home = () => {
     
     const sampleText = 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate'

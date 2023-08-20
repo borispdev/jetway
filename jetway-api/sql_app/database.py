@@ -4,6 +4,7 @@ from sqlalchemy.orm import sessionmaker, DeclarativeBase, mapped_column, Mapped,
 from typing import List
 from datetime import datetime
 
+# DB connection string environment variables
 db_user = environ['DB_USER']
 db_server = environ['MYSQL_SERVER']
 db_port = environ['MYSQL_PORT']
@@ -21,6 +22,7 @@ def get_db_pass():
         db_pass = environ['DB_PASSWORD']
     return db_pass.strip()
 
+# DB connection string
 SQLALCHEMY_DATABASE_URL = f"mysql://{db_user}:{get_db_pass()}@{db_server}:{db_port}/{db_name}"
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
@@ -33,7 +35,7 @@ SessionLocal = sessionmaker(
 class Base(DeclarativeBase):
     pass
 
-
+## Models ## 
 class Country(Base):
     __tablename__ = 'countries'
 

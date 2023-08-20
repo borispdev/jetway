@@ -1,8 +1,18 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faTriangleExclamation} from '@fortawesome/free-solid-svg-icons'
 
+// number input component.
 const NumberInput = ({label, name, onSelect, min, max, value, register, errors}) => {
-    return ( 
+    
+  // label - form control label.
+  // name - input name prop.
+  // onSelect - number select event function prop. 
+  // min - min. value.
+  // max - max.value.
+  // value - text value.
+  // errors - yup validation error messages (if any).
+  // register - function prop for registering control with useForm.
+  return ( 
     <div>
       <label htmlFor="number" className="form-label">
         {label}
