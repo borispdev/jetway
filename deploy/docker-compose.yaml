@@ -17,6 +17,9 @@ services:
       MYSQL_USER: userdb
     ports:
       - '3306:3306'
+    # Restrict access from outside.
+    # expose:
+    #   - 3306
     secrets:
       - db_password
       - db_root_password
@@ -79,15 +82,18 @@ services:
       # API host/domain
       NGINX_API_HOST: api.jet-way.cc
       # Server certificate secret.
-      NGINX_SERVER_CERT: /run/secrets/server_cert
+      NGINX_SERVER_CERT: /run/secrets/server_cert #/etc/nginx/ssl/server_certificate.cert
       # Server private key secret.
-      NGINX_SERVER_KEY: /run/secrets/server_priv_key
+      NGINX_SERVER_KEY: /run/secrets/server_priv_key #/etc/nginx/ssl/server_key.pem
     ports:
       - '80:80'
       - '443:443'
     secrets:
       - server_cert
       - server_priv_key
+    #For use without docker secrets
+    # volumes:
+    #   - /my_super_secret_directory/:/etc/nginx/ssl
 
 volumes:
   jetway_db:
