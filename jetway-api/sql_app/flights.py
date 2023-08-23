@@ -4,13 +4,14 @@ from sqlalchemy import select, cast, Date, func
 from sqlalchemy.orm import joinedload
 from sqlalchemy.sql.expression import __ge__
 from schemas.airline import FlightIn, FlightUpdate
+from fastapi_pagination.ext.sqlalchemy import paginate
 from .database import SessionLocal, Flight
 
 
 def get_flights():
     with SessionLocal() as db:
         today = datetime.now()
-        flights = db.query(Flight).options(joinedload(Flight.airline)).filter(Flight.departure_time >= today).all()
+        flights = db.query(Flight).options(joinedload(Flight.airline)).filter(Flight.departure_time > today).all()
         logger.debug('All flights retrieved from DB')
     return flights
 

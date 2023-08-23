@@ -136,12 +136,14 @@ const Flights = ({dataSource, search, airline}) => {
 
   return (
     <div className="row">
+      {!airline && 
       <div className="row mt-4 justify-content-center">
         <FlightSearchBar
           handleSearch={handleSearch}
           search={search}
         />
       </div>
+      }
       {sortedFlights.length !== 0 ? (
         <>
           <div className="row mt-4">

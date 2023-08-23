@@ -66,6 +66,7 @@ function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<RootLayout />}>
+        <Route index element={<Home/>}/>
         
         {/* == ADMIN ROUTES == */}
           <Route element={< ProtectedRoute role={'admin'}/>}>
@@ -116,7 +117,9 @@ function App() {
          {/* == AIRLINE ROUTES == */}
           <Route element={< ProtectedRoute role={'airline'}/>}>
             <Route path="/airline/flights" element={
-                <Flights airline={true} dataSource="/flights/my/" search={false} />
+                <CountriesContext.Provider value={countries}>
+                  <Flights airline={true} dataSource="/flights/my/" search={false} />
+                </CountriesContext.Provider>
               }
             />
             <Route path="/airlines/addflight" element={
@@ -143,7 +146,6 @@ function App() {
           </Route>
           
           {/* == ANONYMOUS ROUTES == */}
-            <Route index element={<Home/>}/>
             <Route path="/flights"
               element={
                 <CountriesContext.Provider value={countries}>

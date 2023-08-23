@@ -274,6 +274,7 @@ For further improvement improvement:
 - Find and extract some commonly used functions that possibly left to reduce amount of code and keep it DRY.
 
 To do:
+- [ ] Add pricing.
 - [ ] Add user deactivation.
 - [ ] Add email verification.
 - [ ] Add password reset feature by sending email with token link.

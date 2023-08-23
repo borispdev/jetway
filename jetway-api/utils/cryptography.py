@@ -11,7 +11,7 @@ def get_encryption_key():
             key = file.read()
     else:
         key = environ['ENCRYPTION_KEY']
-    return bytes(key.strip())
+    return bytes(key.strip(), encoding='utf-8')
 
 crypt = Fernet(get_encryption_key())
 
