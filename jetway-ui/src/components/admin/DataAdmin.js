@@ -8,10 +8,12 @@ import CustomersTable from "./customersTable";
 import AirlinesTable from "./airlinesTable";
 import AdminsTable from "./adminsTable";
 import UsersTable from "./usersTable";
+import LoadingSpinner from "../common/loadingSpinner";
 
 // Parent component for rendering admin panel tables (users, customers, airlines, admins).
 const DataAdmin = ({dataSortColumn, dataSource, entity}) => {
   
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]); // data from API.
   const [currentPage, setCurrentPage] = useState(1); // Current active page.
   const [totalItems, setTotalItems] = useState(0); // Total items from API.
@@ -22,11 +24,14 @@ const DataAdmin = ({dataSortColumn, dataSource, entity}) => {
   
   // Get data from API.
   const getData = async (query) => {
+    setLoading(true);
     await api.get(query)
     .then((response) => {
       if (response.data.items.length === 0) {
         toast.warning("No records found."); // Display message if nothing found.
+        setLoading(false)
       } else {
+        setLoading(false);
         setCurrentPage(response.data.page); 
         setTotalPages(response.data.pages);
         setData(response.data.items);
@@ -105,9 +110,10 @@ const DataAdmin = ({dataSortColumn, dataSource, entity}) => {
   // Sort data.
   const sortedData = sortData(data, sortColumn);
 
-  return ( 
+  return (
+    <>
     <div className="row">
-        {sortedData.length !== 0 ? (
+        {sortedData.length !== 0 && !loading ? (
           <>
             <div className="row mt-4">
               {/* Display Tables based on selected entity */}
@@ -158,6 +164,12 @@ const DataAdmin = ({dataSortColumn, dataSource, entity}) => {
           </>
         ) : null}
       </div>
+      {loading &&
+        <div className="position-absolute top-50 start-50 translate-middle">
+          <LoadingSpinner loading={loading} />
+        </div>
+      }
+      </>
    );
 }
  

@@ -5,9 +5,11 @@ import _ from 'lodash';
 import api from "../../services/api";
 import Pagination from "../common/pagination";
 import TicketsTable from './../common/ticketsTable';
+import LoadingSpinner from "../common/loadingSpinner";
 
 // Customers tickets component
 const Tickets = ({dataSource}) => {
+    const [loading, setLoading] = useState(false);
     const [tickets, setTickets] = useState([]); // tickets data
     const [currentPage, setCurrentPage] = useState(1); // current page.
     const [totalItems, setTotalItems] = useState(0); // total records quantity.
@@ -18,11 +20,14 @@ const Tickets = ({dataSource}) => {
     
     // Get tickets from api.
     const getData = async (query) => {
+        setLoading(true);
         await api.get(query)
         .then((response) => {
             if (response.data.items.length === 0) {
                 toast.warning("No tickets found.");
+                setLoading(false)
             } else {
+                setLoading(false);
                 setCurrentPage(response.data.page);
                 setTotalPages(response.data.pages);
                 setTickets(response.data.items);
@@ -93,8 +98,9 @@ const Tickets = ({dataSource}) => {
     const sortedData = sortData(tickets, sortColumn);
 
     return ( 
+        <>
         <div className="container">
-                {sortedData.length !== 0 ? (
+                {sortedData.length !== 0 && !loading ? (
                 <>
                     <div className="row mt-4">
                         <TicketsTable
@@ -119,6 +125,12 @@ const Tickets = ({dataSource}) => {
                 ) : (null)
                 }
             </div>
+            {loading &&
+                <div className="position-absolute top-50 start-50 translate-middle">
+                    <LoadingSpinner loading={loading} />
+                </div>
+            }
+            </>
         );
 }
  

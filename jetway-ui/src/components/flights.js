@@ -8,6 +8,7 @@ import moment from "moment";
 import FlightsTable from "./common/flightsTable";
 import FlightSearchBar from "./flightSearchBar";
 import Pagination from "./common/pagination";
+import LoadingSpinner from "./common/loadingSpinner";
 
 // Flights component
 const Flights = ({dataSource, search, airline}) => {
@@ -15,6 +16,7 @@ const Flights = ({dataSource, search, airline}) => {
   // dataSource - api base path.
   // search - show search component.
   // airline - enable airline mode.
+  const [loading, setLoading] = useState(false); // loading spinner state
   const [flights, setFlights] = useState([]); // flights data
   const [currentPage, setCurrentPage] = useState(1); // current page
   const [totalItems, setTotalItems] = useState(0); // total records quantity from api
@@ -25,11 +27,14 @@ const Flights = ({dataSource, search, airline}) => {
 
   // get flights data from api.
   const getData = async (query) => {
-   await api.get(query)
+    setLoading(true);
+    await api.get(query)
     .then((response) => {
       if (response.data.items.length === 0) {
         toast.warning("No flights found.");
+        setLoading(false)
       } else {
+        setLoading(false);
         setCurrentPage(response.data.page);
         setTotalPages(response.data.pages);
         formatDates(response.data.items);
@@ -135,6 +140,7 @@ const Flights = ({dataSource, search, airline}) => {
   const sortedFlights = sortData(flights, sortColumn);
 
   return (
+    <>
     <div className="row">
       {!airline && 
       <div className="row mt-4 justify-content-center">
@@ -144,7 +150,7 @@ const Flights = ({dataSource, search, airline}) => {
         />
       </div>
       }
-      {sortedFlights.length !== 0 ? (
+      {sortedFlights.length !== 0 && !loading ? (
         <>
           <div className="row mt-4">
             <FlightsTable
@@ -171,6 +177,12 @@ const Flights = ({dataSource, search, airline}) => {
         </>
       ) : null}
     </div>
+    {loading &&
+      <div className="position-absolute top-50 start-50 translate-middle">
+        <LoadingSpinner loading={loading} />
+      </div>
+    }
+    </>
   );
 }
  
