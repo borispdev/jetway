@@ -54,7 +54,7 @@ const FlightsTable = ({
           qty={0}
           onBuy={() => onPurchase(item.id)}
           // if user profile missing credit card, button is disabled.
-          isDisabled={profile.credit_card === null ? true : false }
+          isDisabled={profile === {} ? true : false }
         />
       )
     };
