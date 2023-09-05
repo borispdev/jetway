@@ -56,7 +56,6 @@
 
 ## Features
 
-List the ready features here:
 - Browsing and searching flights by parameters.
 - User role and permissions management.
 - Flight management for airlines.
