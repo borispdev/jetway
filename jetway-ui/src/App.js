@@ -26,7 +26,7 @@ export const ProfileContext = createContext('');
 function App() {
   const [countries, setCountries] = useState([]); // countries list state.
   const [profile, setProfile] = useState({}); // current profile state.
-  
+
   // call api to get countries list.
   const getCountries = async () => {
     await api.get('/countries/')
@@ -47,7 +47,11 @@ function App() {
          setProfile(response.data);
        })
        .catch((error) => {
-        toast.error(`${error.message} \n\n ${error.response.data.detail}`);
+        if (error.response.status === 400) {
+          toast.warning('Please update your profile to book flights.')
+        } else {
+          toast.error(`${error.message} \n\n ${error.response.data.detail}`);
+        }
        });
     }
  }
@@ -141,7 +145,7 @@ function App() {
               <Tickets dataSource={'/tickets/'}/>
             } />
             <Route path="/customer" element={
-              <CustomerForm title='Update profile' profile={profile}/>
+                <CustomerForm title='Update profile' profile={profile}/>
             } />
           </Route>
           

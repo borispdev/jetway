@@ -1,4 +1,5 @@
 import api  from '../../services/api';
+import { login } from '../../services/authentication';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Input from './input';
@@ -18,16 +19,26 @@ const NewUserForm = () => {
         delete data.confirmPassword;
         await api.post('/users/', data)
             .then((response) => {
+                newUserLogin(data.username, data.password);
                 // redirect user to login page on success
-                navigate('/login');
-                toast.success('Registration successful, you can now login.');
             })
             .catch((error) => {
                 // Display API error.
                 toast.error(`${error.message} \n\n ${error.response.data.detail}`); 
             });
+        }
+    // login and redirect to profile update form
+    const newUserLogin = async (username, password) => {
+        const form_data = new FormData();
+        form_data.append('username', username);
+        form_data.append('password', password);
+        const {data: jwt } = await login(form_data);
+        localStorage.setItem('token', jwt.access_token);
+        navigate('/customer');
+        window.location.reload();
+        toast.success('Registration successful, please update your profile.');
     }
-
+        
     return (
         <div className="row justify-content-center">
             <fieldset className="col-6 mt-2">

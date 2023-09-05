@@ -38,7 +38,7 @@ async def update_customer(
     return customer
 
 @router.get('/customers/me', response_model=CustomerOut, name="Get current customer profile.")
-async def update_customer(
+async def get_current_customer(
         current_user: Annotated[UserInput, Security(get_active_user, scopes=['customer'])]):
     customer = customer_facade.get_customer(current_user.id)
     return customer

@@ -25,8 +25,8 @@ class CustomerFacade(BaseFacade):
         """
         Update customer profile
         """
-        customer_db = self.get_customer(customer.user_id)
-        if customer_db.id is None:
+        # customer_db = self.get_customer(customer.user_id)
+        if customers.get_customer_by_user_id(customer.user_id) is None:
             updated_customer = admin.add_customer(customer)
         else:
             updated_customer = customers.update_customer(customer)

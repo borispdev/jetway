@@ -49,7 +49,8 @@ const CustomerForm = ({title, profile}) => {
                         toast.error(`${error.message} \n\n ${error.response.data.detail}`);
                     });
         }
-        navigate(-1); // Go back in any case (success or error).
+        navigate('/');
+        window.location.reload();
     }
     
     return ( 
